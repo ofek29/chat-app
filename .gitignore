@@ -1,0 +1,25 @@
+# OS generated files
+.DS_Store
+Thumbs.db
+
+#Server 
+server/node_modules/
+server/.env
+
+# React (Frontend)
+client/node_modules/
+client/build/
+
+build/
+dist/
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+.env
+
+# Miscellaneous
+*.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
