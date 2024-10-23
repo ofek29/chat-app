@@ -10,13 +10,16 @@ The **Chat App** is a real-time messaging platform that allows users to communic
 - 💬 **Multiple Chat Rooms**: Join or create rooms for group conversations.
 - 🧑‍🤝‍🧑 **Direct Messaging**: Private 1-on-1 chat feature.
 - 🖥️ **Responsive Design**: Tailwind CSS ensures the app works seamlessly across devices.
-- ⚡ **Fast Development with Vite**: Lightning-fast builds and HMR (Hot Module Replacement) for an improved developer experience.
+- ⚡ **Fast Development with Vite**: Lightning-fast builds and HMR (Hot Module Replacement) for an
+  improved developer experience.
 
 ## Tech Stack
 
 ### Backend
 - **Node.js**: JavaScript runtime for the backend.
 - **Express.js**: Web framework for Node.js.
+- **MongoDB**: NoSQL database for storing user information and chat data.
+
 - **Socket.IO**: Enables real-time, bidirectional communication between the client and server.
 
 ### Frontend
