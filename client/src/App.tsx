@@ -8,13 +8,10 @@ import { useAuth } from "./context/AuthContext"
 
 function App() {
   const { user } = useAuth();
-  console.log('aspp', user);
-
   return (
     <>
       <NavBar />
       <Routes>
-        {/* <Route path="/" element={<Home />} /> */}
         <Route path="/" element={user ? <Chat /> : <Login />} />
         <Route path="/login" element={user ? <Chat /> : <Login />} />
         <Route path="/register" element={user ? <Chat /> : <Register />} />

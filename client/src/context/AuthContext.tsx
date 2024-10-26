@@ -44,7 +44,7 @@ type RegisterError = {
 
 type Props = { children: React.ReactNode };
 
-export const UserContext = createContext<UserContextType | undefined>(undefined);//{} as UserContextType
+export const UserContext = createContext<UserContextType | undefined>(undefined);
 
 
 export const AuthContextProvider = ({ children }: Props) => {
@@ -85,11 +85,6 @@ export const AuthContextProvider = ({ children }: Props) => {
         // setLoginInfo({ ...loginInfo, [name]: value });
     }, []);
 
-    console.log('reg info:', registerInfo);
-    console.log('log info', loginInfo);
-
-    console.log('user:', user);
-
     const registerUser = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setIsRegisterLoading(true);
@@ -120,12 +115,6 @@ export const AuthContextProvider = ({ children }: Props) => {
         }
         localStorage.setItem('user', JSON.stringify(response));
         setUser(response);
-        // setLoginInfo({ email: '', password: '' });
-        // setLoginError(null);
-        // setMessage('Logged in successfully');
-        // navigate('/dashboard');
-        // navigate('/dashboard');
-        // navigate('/');   
     }, [loginInfo]);
 
     const logoutUser = useCallback(() => {

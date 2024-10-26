@@ -1,8 +1,7 @@
 
-export const baseUrl = 'http://localhost:5101/api';
+export const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 export const fetchFromApi = async (url: string, body: string) => {
-    console.log(body);
 
     const response = await fetch(url, {
         method: 'POST',
