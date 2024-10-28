@@ -12,7 +12,6 @@ export const fetchFromApi = async (url: string, body: string) => {
     });
 
     const data = await response.json();
-
     if (!response.ok) {
         let message;
         if (data?.message) {
@@ -25,3 +24,19 @@ export const fetchFromApi = async (url: string, body: string) => {
 
     return data;
 }
+
+export const getFromApi = async (url: string) => {
+
+    const response = await fetch(url);
+    if (!response.ok) {
+        // let message = "get from API failed, error occurred";
+        // if (response.error) {
+        // //     message = data.message;
+        // // } else {
+        // //     message = data;
+        // // }
+        return { error: true, response };
+    }
+    const data = await response.json();
+    return data;
+};
