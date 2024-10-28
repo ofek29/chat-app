@@ -1,25 +1,9 @@
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { baseUrl, fetchFromApi } from "../utils/services";
 
-type UserContextType = {
-    user: User | undefined,
 
-    registerInfo: RegisterInfo | undefined,
-    registerError: RegisterError | null,
-    updateRegisterInfo: (name: string, value: string) => void,
-    registerUser: (e: React.FormEvent<HTMLFormElement>) => void,
-    isRegisterLoading: boolean,
-
-    loginInfo: LoginInfo | undefined,
-    loginError: RegisterError | null,
-    updateLoginInfo: (name: string, value: string) => void,
-    loginUser: (e: React.FormEvent<HTMLFormElement>) => void,
-    isLoginLoading: boolean,
-
-    logoutUser: () => void,
-};
-
-type User = {
+export type User = {
+    _id?: string,
     name: string,
     email: string,
     token: string
@@ -36,24 +20,43 @@ type LoginInfo = {
     password: string
 };
 
-type RegisterError = {
+type UserError = {
     error: boolean,
     response: string,
     message?: string
 } | null;
 
-type Props = { children: React.ReactNode };
+type Props = {
+    children: React.ReactNode
+};
 
-export const UserContext = createContext<UserContextType | undefined>(undefined);
+interface AuthContextType {
+    user: User | undefined;
 
+    registerInfo: RegisterInfo | undefined;
+    registerError: UserError | null;
+    updateRegisterInfo(name: string, value: string): void;
+    registerUser(e: React.FormEvent<HTMLFormElement>): void;
+    isRegisterLoading: boolean;
 
-export const AuthContextProvider = ({ children }: Props) => {
+    loginInfo: LoginInfo | undefined;
+    loginError: UserError | null;
+    updateLoginInfo(name: string, value: string): void;
+    loginUser(e: React.FormEvent<HTMLFormElement>): void;
+    isLoginLoading: boolean;
+
+    logoutUser(): void;
+};
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+const AuthProvider = ({ children }: Props) => {
 
     const [user, setUser] = useState<User | undefined>(undefined);
-    const [registerError, setRegisterError] = useState<RegisterError>(null);
-    const [isRegisterLoading, setIsRegisterLoading] = useState(false);
-    const [loginError, setLoginError] = useState<RegisterError>(null);
-    const [isLoginLoading, setIsLoginLoading] = useState(false);
+    const [registerError, setRegisterError] = useState<UserError>(null);
+    const [isRegisterLoading, setIsRegisterLoading] = useState<boolean>(false);
+    const [loginError, setLoginError] = useState<UserError>(null);
+    const [isLoginLoading, setIsLoginLoading] = useState<boolean>(false);
     const [registerInfo, setRegisterInfo] = useState<RegisterInfo>({
         name: '',
         email: '',
@@ -66,6 +69,7 @@ export const AuthContextProvider = ({ children }: Props) => {
 
     useEffect(() => {
         const user = localStorage.getItem('user');
+
         if (user) {
             setUser(JSON.parse(user));
         }
@@ -110,7 +114,6 @@ export const AuthContextProvider = ({ children }: Props) => {
         setIsLoginLoading(false);
 
         if (response.error) {
-            console.log(response, response.error, response.message);
             return setLoginError(response)
         }
         localStorage.setItem('user', JSON.stringify(response));
@@ -124,7 +127,7 @@ export const AuthContextProvider = ({ children }: Props) => {
 
 
     return (
-        <UserContext.Provider
+        <AuthContext.Provider
             value={{
                 user,
                 registerInfo,
@@ -141,14 +144,16 @@ export const AuthContextProvider = ({ children }: Props) => {
             }}
         >
             {children}
-        </UserContext.Provider>
+        </AuthContext.Provider>
     )
 }
+export default AuthProvider
 
 export const useAuth = () => {
-    const context = useContext(UserContext);
+    const context = useContext(AuthContext);
     if (!context) {
         throw new Error('useAuth must be used within an AuthContextProvider');
     }
     return context;
 }
+

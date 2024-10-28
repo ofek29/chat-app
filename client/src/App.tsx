@@ -4,12 +4,14 @@ import { Chat } from "./pages/Chat"
 import { Register } from "./pages/Register"
 import { NavBar } from "./components/NavBar/NavBar"
 import { useAuth } from "./context/AuthContext"
-
+import ChatProvider from "./context/chatContext"
 
 function App() {
   const { user } = useAuth();
+  console.log(user);
+
   return (
-    <>
+    <ChatProvider user={user}>
       <NavBar />
       <Routes>
         <Route path="/" element={user ? <Chat /> : <Login />} />
@@ -17,7 +19,7 @@ function App() {
         <Route path="/register" element={user ? <Chat /> : <Register />} />
         <Route path="*" element={<Navigate to='/' />} />
       </Routes>
-    </>
+    </ChatProvider>
   )
 }
 
