@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
-import { baseUrl, getFromApi } from "../utils/services";
+import { baseUrl, fetchFromApi, getFromApi } from "../utils/services";
 import { User } from "../types/user.types";
 import { UserChat } from "../types/chat.types";
 
@@ -35,6 +35,8 @@ interface ChatContextType {
     messages: Message[] | null;
     isMessagesLoading: boolean;
     messagesError: ChatsError | null;
+
+    sendTextMessage: (textMessage: string, sender: string | undefined, chatId: string | undefined, setTextMessage: React.Dispatch<React.SetStateAction<string>>) => void;
 };
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -44,9 +46,14 @@ const ChatProvider = ({ children, user }: Props) => {
     const [isUserChatsLoading, setIsUserChatsLoading] = useState(false);
     const [userChatsError, setUserChatsError] = useState(null);
     const [currentChat, setCurrentChat] = useState<UserChat | null>(null);
-    const [messages, setMessages] = useState(null);
+    const [messages, setMessages] = useState<Message[] | null>(null);
     const [isMessagesLoading, setIsMessagesLoading] = useState(false);
-    const [messagesError, setMessagesError] = useState(null);
+    const [messagesError, setMessagesError] = useState<ChatsError | null>(null);
+
+    const [sendMessageError, setSendMessageError] = useState<ChatsError>(null);
+    const [newMessage, setNewMessage] = useState(null);
+    console.log(messages);
+
 
     useEffect(() => {
         const getUserChats = async () => {
@@ -91,6 +98,32 @@ const ChatProvider = ({ children, user }: Props) => {
         setCurrentChat(chat);
     }, []);
 
+    const sendTextMessage = useCallback(
+        async (textMessage: string, sender: string | undefined, chatId: string | undefined, setTextMessage: React.Dispatch<React.SetStateAction<string>>) => {
+            if (!textMessage) {
+                return console.log('you must type a text message');
+            }
+            const response = await fetchFromApi(`${baseUrl}/messages`, JSON.stringify({
+                content: textMessage,
+                senderId: sender,
+                chatId: chatId
+            }))
+            if (response.error) {
+                return setSendMessageError(response);
+            }
+            console.log(response, ' res');
+
+            setNewMessage(response);
+            setMessages((prev: Message[] | null) => {
+                if (prev === null) {
+                    return null;
+                }
+                return [...prev, response];
+            });
+            setTextMessage('');
+        }, [],)
+
+
     return (
         <ChatContext.Provider
             value={{
@@ -102,6 +135,7 @@ const ChatProvider = ({ children, user }: Props) => {
                 messages,
                 isMessagesLoading,
                 messagesError,
+                sendTextMessage,
             }}
         >
             {children}

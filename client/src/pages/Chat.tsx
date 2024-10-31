@@ -7,21 +7,23 @@ export const Chat = () => {
     const { userChats, isUserChatsLoading, updateCurrentChat } = useChat();
     const { user } = useAuth();
     return (
-        <div>
+        <div className="flex justify-center  ">
             {!userChats ? null : (
-                <div className="flex flex-row items-center gap-2 border-4 border-red-200">
-                    <div className="border-4 border-red-500">
+                <div className="flex flex-row gap-2 ">
+                    <div className="border-4 ">
                         {isUserChatsLoading && <p>Loading chats...</p>}
                         {userChats?.map((chat, index) => {
                             return (
-                                <div onClick={() => updateCurrentChat(chat)} key={index}>
+                                <div
+                                    className="border"
+                                    onClick={() => updateCurrentChat(chat)} key={index}>
                                     <UsersChat chat={chat} user={user} />
                                 </div>
                             )
                         })}
                     </div>
 
-                    <div className="border-4 border-red-700">
+                    <div className="">
                         <ChatBox />
                     </div>
                 </div >
