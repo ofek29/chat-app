@@ -1,11 +1,17 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { baseUrl, getFromApi } from "../utils/services";
-import { User } from "./AuthContext";
+import { User } from "../types/user.types";
+import { UserChat } from "../types/chat.types";
 
-type UserChat = {
-    _id: string,
-    members: Array<Object>
-};
+type Message = {
+    _id: string;
+    chatId: string;
+    content: string;
+    createdAt: string;
+    senderId: string;
+    updatedAt: string;
+}
+
 
 type ChatsError = {
     error: boolean
@@ -20,9 +26,15 @@ type Props = {
 };
 
 interface ChatContextType {
-    userChats: UserChat | null;
+    userChats: UserChat[] | null;
     isUserChatsLoading: boolean;
     userChatsError: ChatsError | null;
+    currentChat: UserChat | null;
+    updateCurrentChat: (chat: UserChat) => void;
+
+    messages: Message[] | null;
+    isMessagesLoading: boolean;
+    messagesError: ChatsError | null;
 };
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -31,30 +43,53 @@ const ChatProvider = ({ children, user }: Props) => {
     const [userChats, setUserChats] = useState(null);
     const [isUserChatsLoading, setIsUserChatsLoading] = useState(false);
     const [userChatsError, setUserChatsError] = useState(null);
+    const [currentChat, setCurrentChat] = useState<UserChat | null>(null);
+    const [messages, setMessages] = useState(null);
+    const [isMessagesLoading, setIsMessagesLoading] = useState(false);
+    const [messagesError, setMessagesError] = useState(null);
 
-    const getUserChats = async () => {
-        console.log(user, user?._id);
-
-        if (user?._id) {
-            setIsUserChatsLoading(true);
-            setUserChatsError(null);
-
-            const response = await getFromApi(`${baseUrl}/chats/${user?._id}`);
-            setIsUserChatsLoading(false);
-            if (response.error) {
-                console.log('error loading chat', response.error);
-                return setUserChatsError(response); //todo check returns
-            }
-            console.log(userChats);
-
-            setUserChats(response);
-        }
-    }
     useEffect(() => {
-        console.log('getting chat useEffect');
+        const getUserChats = async () => {
 
+            if (user?._id) {
+                setIsUserChatsLoading(true);
+                setUserChatsError(null);
+
+                const response = await getFromApi(`${baseUrl}/chats/${user?._id}`);
+                setIsUserChatsLoading(false);
+                if (response.error) {
+                    console.log('error loading chat', response.error);
+                    return setUserChatsError(response); //todo check returns
+                }
+
+                setUserChats(response);
+            }
+        }
         getUserChats();
-    }, [])
+    }, [user]);
+
+    useEffect(() => {
+        const getMessages = async () => {
+            if (user?._id) {
+                setIsMessagesLoading(true);
+                setMessagesError(null);
+
+                const response = await getFromApi(`${baseUrl}/messages/${currentChat?._id}`);
+                setIsMessagesLoading(false);
+                if (response.error) {
+                    console.log('error loading Messages', response.error);
+                    return setMessagesError(response);
+                }
+
+                setMessages(response);
+            }
+        }
+        getMessages();
+    }, [currentChat]);
+
+    const updateCurrentChat = useCallback((chat: UserChat) => {
+        setCurrentChat(chat);
+    }, []);
 
     return (
         <ChatContext.Provider
@@ -62,7 +97,11 @@ const ChatProvider = ({ children, user }: Props) => {
                 userChats,
                 isUserChatsLoading,
                 userChatsError,
-
+                currentChat,
+                updateCurrentChat,
+                messages,
+                isMessagesLoading,
+                messagesError,
             }}
         >
             {children}

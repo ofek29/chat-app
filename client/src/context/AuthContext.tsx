@@ -1,13 +1,8 @@
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { baseUrl, fetchFromApi } from "../utils/services";
+import { User } from "../types/user.types";
 
 
-export type User = {
-    _id?: string,
-    name: string,
-    email: string,
-    token: string
-} | undefined;
 
 type RegisterInfo = {
     name: string,
