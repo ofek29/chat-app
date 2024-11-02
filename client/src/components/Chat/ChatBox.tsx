@@ -21,14 +21,27 @@ export const ChatBox = () => {
     };
 
     const formatDate = (isoString: string) => {
-        const date = new Date(isoString);
-        return date.toLocaleString('en-il', {
+        const messageDate = new Date(isoString);
+        const today = new Date();
+        const isToday =
+            messageDate.getDate() === today.getDate() &&
+            messageDate.getMonth() === today.getMonth() &&
+            messageDate.getFullYear() === today.getFullYear();
+
+        if (isToday) {
+            return `Today ${messageDate.toLocaleTimeString('en-il', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            })}`;
+        }
+        return messageDate.toLocaleString('en-il', {
             hour: '2-digit',
             minute: '2-digit',
             day: '2-digit',
             month: '2-digit',
             hour12: false,
-        }).replace(',', ''); // Remove comma to match desired format
+        }).replace(',', '');
     };
 
 
@@ -40,7 +53,7 @@ export const ChatBox = () => {
 
             {messages && messages.map((message, index) =>
                 <div key={index}
-                    className={`m-2 p-2 rounded-lg text-center
+                    className={`my-1 mx-1 px-2 py-1 rounded-lg text-center
                     ${message?.senderId === user?._id
                             ? 'bg-blue-500 text-white self-end'
                             : 'bg-gray-300 text-black self-start'

@@ -12,6 +12,7 @@ type RecipientUser = {
     updatedAt: string,
 }
 export const getRecipientUser = (chat: UserChat | null, user: User) => {
+
     const [recipientUser, setRecipientUser] = useState<RecipientUser | null>(null);
     const [error, setError] = useState(null);
 
@@ -25,8 +26,6 @@ export const getRecipientUser = (chat: UserChat | null, user: User) => {
                 return setError(response);
             }
             setRecipientUser(response);
-            console.log(response);
-
         }
 
         getUser();

@@ -10,6 +10,8 @@ type UsersChatProps = {
 
 export const UsersChat: React.FC<UsersChatProps> = ({ chat, user }) => {
     const { recipientUser } = getRecipientUser(chat, user);
+    // console.log(recipientUser, chat, user);
+
 
     return (
         <div>
@@ -19,9 +21,9 @@ export const UsersChat: React.FC<UsersChatProps> = ({ chat, user }) => {
                 <div>Text message</div>
             </div>
             <div className="flex gap-1 p-1">
-                <div>sendate</div>
-                <div>1</div>
-                <span>online status</span>
+                <div>senDate</div>
+                <div>1M</div>
+                <span>online-status</span>
             </div>
         </div>
     )

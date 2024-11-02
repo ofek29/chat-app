@@ -12,13 +12,11 @@ type Message = {
     updatedAt: string;
 }
 
-
 type ChatsError = {
     error: boolean
     response: Response,
 
 } | null;
-
 
 type Props = {
     children: React.ReactNode,
@@ -35,6 +33,8 @@ interface ChatContextType {
     messages: Message[] | null;
     isMessagesLoading: boolean;
     messagesError: ChatsError | null;
+    createChat: (firstId: string | undefined, secondId: string | undefined) => void;
+    allUsers: User[];
 
     sendTextMessage: (textMessage: string, sender: string | undefined, chatId: string | undefined, setTextMessage: React.Dispatch<React.SetStateAction<string>>) => void;
 };
@@ -42,7 +42,7 @@ interface ChatContextType {
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
 const ChatProvider = ({ children, user }: Props) => {
-    const [userChats, setUserChats] = useState(null);
+    const [userChats, setUserChats] = useState<UserChat[] | null>(null);
     const [isUserChatsLoading, setIsUserChatsLoading] = useState(false);
     const [userChatsError, setUserChatsError] = useState(null);
     const [currentChat, setCurrentChat] = useState<UserChat | null>(null);
@@ -50,9 +50,11 @@ const ChatProvider = ({ children, user }: Props) => {
     const [isMessagesLoading, setIsMessagesLoading] = useState(false);
     const [messagesError, setMessagesError] = useState<ChatsError | null>(null);
 
+    const [allUsers, setAllUsers] = useState<User[]>([]);
+
     const [sendMessageError, setSendMessageError] = useState<ChatsError>(null);
-    const [newMessage, setNewMessage] = useState(null);
-    console.log(messages);
+    const [newMessage, setNewMessage] = useState<Message | null>(null);
+
 
 
     useEffect(() => {
@@ -68,7 +70,6 @@ const ChatProvider = ({ children, user }: Props) => {
                     console.log('error loading chat', response.error);
                     return setUserChatsError(response); //todo check returns
                 }
-
                 setUserChats(response);
             }
         }
@@ -94,7 +95,54 @@ const ChatProvider = ({ children, user }: Props) => {
         getMessages();
     }, [currentChat]);
 
+
+    useEffect(() => {
+        const getAllUsers = async () => {
+            const response = await getFromApi(`${baseUrl}/users`);
+            if (response.error) {
+                return console.log('error loading all users', response);
+            }
+
+            const filterAllUsers = response.filter((curr: { _id: string | undefined; }) => {
+                let isChat = false;
+                if (user?._id === curr._id) return false;
+
+                if (userChats) {
+                    isChat = userChats?.some((chat) => {
+                        return chat.members[0] === curr._id || chat.members[1] === curr._id;
+                    })
+                }
+                return !isChat;
+            });
+            console.log(filterAllUsers);
+
+            setAllUsers(filterAllUsers);
+        }
+        getAllUsers();
+    }, [userChats]);
+
+
+    const createChat = useCallback(async (firstId: string | undefined, secondId: string | undefined) => {
+        console.log('importing all users');
+
+        const response = await fetchFromApi(`${baseUrl}/chats`, JSON.stringify({ firstId, secondId }));
+        if (response.error) {
+            return console.log('Error creating chat', response);
+        }
+        setUserChats((prev) => {
+            if (prev === null) {
+                return null;
+            }
+            console.log(response);
+
+            return [...prev, response];
+        });
+    }, []);
+
+
     const updateCurrentChat = useCallback((chat: UserChat) => {
+        console.log('updateCurrentChat', chat);
+
         setCurrentChat(chat);
     }, []);
 
@@ -111,7 +159,6 @@ const ChatProvider = ({ children, user }: Props) => {
             if (response.error) {
                 return setSendMessageError(response);
             }
-            console.log(response, ' res');
 
             setNewMessage(response);
             setMessages((prev: Message[] | null) => {
@@ -135,6 +182,8 @@ const ChatProvider = ({ children, user }: Props) => {
                 messages,
                 isMessagesLoading,
                 messagesError,
+                createChat,
+                allUsers,
                 sendTextMessage,
             }}
         >
