@@ -4,7 +4,7 @@ import { useAuth } from "../../context/AuthContext"
 export const NavBar = () => {
     const { user, logoutUser } = useAuth();
     return (
-        <div className="flex items-center justify-between bg-slate-500">
+        <div className="h-16 flex items-center justify-between bg-slate-500">
             <Link to="/" className="text-2xl font-bold m-4" >Chat</Link>
             {!user &&
                 <div className="mr-4" >

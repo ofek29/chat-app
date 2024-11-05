@@ -7,15 +7,19 @@ export const AllUsersChats = () => {
 
     return (
         <div>
-            <div>
+            <div
+                className="w-11/12 bg-[#5E6673] text-lg font-medium rounded m-2 p-2 border border-gray-400">
+
+                <p className="mb-2 border-b-2 border-gray-400">Send new chat:</p>
                 {allUsers && allUsers.map((currUser, index) => {
                     return (
-                        <div key={index} onClick={() => createChat(user?._id, currUser?._id)}>
+                        <div className="text-center mb-1 py-1 px-2 border rounded-lg" key={index} onClick={() => createChat(user?._id, currUser?._id)}>
                             {currUser?.name}
                         </div>
                     )
                 })}
             </div>
+
         </div>
     )
 }

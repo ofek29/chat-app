@@ -52,8 +52,8 @@ const ChatProvider = ({ children, user }: Props) => {
 
     const [allUsers, setAllUsers] = useState<User[]>([]);
 
-    const [sendMessageError, setSendMessageError] = useState<ChatsError>(null);
-    const [newMessage, setNewMessage] = useState<Message | null>(null);
+    // const [sendMessageError, setSendMessageError] = useState<ChatsError>(null);
+    // const [newMessage, setNewMessage] = useState<Message | null>(null); todo check-----
 
 
 
@@ -157,10 +157,11 @@ const ChatProvider = ({ children, user }: Props) => {
                 chatId: chatId
             }))
             if (response.error) {
-                return setSendMessageError(response);
+                // return setSendMessageError(response);
+                return console.log('Error sending message', response);
             }
 
-            setNewMessage(response);
+            // setNewMessage(response);
             setMessages((prev: Message[] | null) => {
                 if (prev === null) {
                     return null;
