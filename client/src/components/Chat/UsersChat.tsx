@@ -17,7 +17,7 @@ export const UsersChat: React.FC<UsersChatProps> = ({ chat, user }) => {
         <div >
             <div className="flex gap-1 p-1 ">
                 <div><img className="h-10 w-10" src={avatar} alt="avatar" /></div>
-                <div>{recipientUser?.name}</div>
+                <p>{recipientUser?.name}</p>
                 <div>Text message</div>
             </div>
             <div className="flex gap-1 p-1">
