@@ -8,34 +8,32 @@ export const Chat = () => {
     const { userChats, isUserChatsLoading, updateCurrentChat } = useChat();
     const { user } = useAuth();
     return (
-        <div className="bg-[#192339] h-[calc(100vh-4rem)] flex justify-center ">
+        <div className="bg-[#0c1821] h-[calc(100vh-4rem)]  flex justify-center items-center ">
+            {!userChats ? null : (
+                <div
+                    className="bg-[#1b2a41] h-[75%] w-[80%] p-4 gap-2 border border-gray-600 flex flex-row justify-between text-white rounded-xl">
+                    <div className="w-[20%] border-r">
+                        <AllUsersChats />
+                    </div>
+                    <div className="w-[30%] border-r ">
+                        {isUserChatsLoading && <p>Loading chats...</p>}
+                        {userChats?.map((chat, index) => {
+                            return (
+                                <div
+                                    onClick={() => updateCurrentChat(chat)}
+                                    key={index}>
+                                    <UsersChat chat={chat} user={user} />
+                                </div>
+                            )
+                        })}
+                    </div>
 
-            <div className="flex justify-center h-[500px] w-[800px] border border-red-600 ">
-                {!userChats ? null : (
-                    <div className="flex flex-row gap-2  text-white">
-                        <div>
-                            <AllUsersChats />
-                        </div>
-                        <div className="border-2 h-auto max-h-fit ">
-                            {isUserChatsLoading && <p>Loading chats...</p>}
-                            {userChats?.map((chat, index) => {
-                                return (
-                                    <div
-                                        className="border"
-                                        onClick={() => updateCurrentChat(chat)}
-                                        key={index}>
-                                        <UsersChat chat={chat} user={user} />
-                                    </div>
-                                )
-                            })}
-                        </div>
-                        <div className="">
-                            <ChatBox />
-                        </div>
-                    </div >
+                    <ChatBox />
 
-                )}
-            </div >
+                </div >
+
+            )}
+
         </div>
     )
 }
