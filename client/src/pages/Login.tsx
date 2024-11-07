@@ -5,34 +5,38 @@ export const Login = () => {
     const { loginUser, isLoginLoading, updateLoginInfo, loginError } = useAuth();
 
     return (
-        <div className="justify-center flex bg-neutral-400 h-dvh ">
-            <form onSubmit={loginUser}
-                className="w-80  gap-8 flex flex-col justify-center ">
-                <h1 className=" text-xl text-center">Sign In</h1>
+        <div className="bg-[#0c1821] h-[calc(100vh-4rem)] flex justify-center items-center">
+            <div className="w-[35%] h-[50%] min-w-[400px] bg-[#1b2a41] text-white rounded-2xl border-gray-500 border-[0.5px] justify-center flex">
+                <form onSubmit={loginUser}
+                    className="w-2/3 gap-8 flex flex-col justify-center  ">
+                    <h1 className=" text-xl text-center">Sign In</h1>
 
-                <input type="email"
-                    name="email"
-                    onChange={(e) =>
-                        updateLoginInfo(e.target.name, e.target.value)}
-                    placeholder="Email" />
+                    <input type="email"
+                        name="email"
+                        className="text-black rounded-sm bg-slate-300"
+                        onChange={(e) =>
+                            updateLoginInfo(e.target.name, e.target.value)}
+                        placeholder="Email" />
 
-                <input type="password"
-                    name="password"
-                    onChange={(e) =>
-                        updateLoginInfo(e.target.name, e.target.value)}
-                    placeholder="Password" />
+                    <input type="password"
+                        name="password"
+                        className="text-black rounded-sm bg-slate-300"
+                        onChange={(e) =>
+                            updateLoginInfo(e.target.name, e.target.value)}
+                        placeholder="Password" />
 
-                <button
-                    type="submit"
-                    className="rounded-lg bg-slate-500 hover:bg-orange-300">
-                    {isLoginLoading ? 'loading' : 'Login'}
-                </button>
+                    <button
+                        type="submit"
+                        className="rounded-lg bg-[#778DA9] hover:bg-[#BCBDB3]">
+                        {isLoginLoading ? 'loading' : 'Login'}
+                    </button>
 
-                {loginError?.error &&
-                    <div className="text-red-500">
-                        <p>{loginError?.message}</p>
-                    </div>}
-            </form>
+                    {loginError?.error &&
+                        <div className="text-red-500">
+                            <p>{loginError?.message}</p>
+                        </div>}
+                </form>
+            </div>
         </div >
     )
 }

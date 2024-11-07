@@ -14,17 +14,19 @@ export const UsersChat: React.FC<UsersChatProps> = ({ chat, user }) => {
 
 
     return (
-        <div >
-            <div className="flex gap-1 p-1 ">
-                <div><img className="h-10 w-10" src={avatar} alt="avatar" /></div>
-                <p>{recipientUser?.name}</p>
-                <div>Text message</div>
+        <div className="border-b" >
+            <div className=" flex items-center gap-3 p-2 ">
+                <img className="h-10 w-10 rounded-full" src={avatar} alt="avatar" />
+                <div>
+                    <p className="font-semibold">{recipientUser?.name}</p>
+                    <div className="text-gray-400" >Text message</div>
+                </div>
             </div>
-            <div className="flex gap-1 p-1">
+            {/* <div className="flex gap-1 p-1">
                 <div>senDate</div>
                 <div>1M</div>
                 <span>online-status</span>
-            </div>
+            </div> */}
         </div>
     )
 }

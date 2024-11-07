@@ -28,7 +28,8 @@ const registerUser = async (req, res) => {
             return res.status(400).json('Invalid email');
         }
         if (!validator.isStrongPassword(password)) {
-            return res.status(400).json('Week password');
+            return res.status(400).json
+                ('passwords must be at least 8 characters and contain 1 uppercase, 1 lowercase, 1 number and 1 symbols');
         }
 
         user = new userModel({ name, email, password });

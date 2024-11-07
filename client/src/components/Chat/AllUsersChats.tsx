@@ -8,7 +8,7 @@ export const AllUsersChats = () => {
     return (
         <div>
             <div
-                className="w-11/12 bg-[#5E6673] text-lg font-medium rounded m-2 p-2 border border-gray-400">
+                className="w-11/12 text-lg font-medium rounded m-2 p-2 border border-gray-400">
 
                 <p className="mb-2 border-b-2 border-gray-400">Send new chat:</p>
                 {allUsers && allUsers.map((currUser, index) => {
