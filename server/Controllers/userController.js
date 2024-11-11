@@ -118,8 +118,13 @@ const deleteUser = async (req, res) => {
             return res.status(400).json('User not found');
         }
 
-        //delete messages
-        await messageModel.deleteMany({ senderId: userId });
+        //find and delete all messages connected to chat of a user
+        const userChats = await chatModel.find({ members: { $in: [userId] } });
+        const userChatsIds = userChats.map(chat => chat._id);
+        userChatsIds.forEach(async (chatId) => {
+            await messageModel.deleteMany({ chatId: chatId });
+        });
+        //delete all chats of a user
         await chatModel.deleteMany({ members: { $in: [userId] } });
 
         res.status(200).json(user);
