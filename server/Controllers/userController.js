@@ -3,6 +3,8 @@ const jwt = require('jsonwebtoken');
 const validator = require('validator');
 
 const userModel = require('../Models/userModel');
+const messageModel = require('../Models/messageModel');
+const chatModel = require('../Models/chatModel');
 
 //crate token for user authentication
 const createToken = (_id) => {
@@ -105,3 +107,25 @@ const getAllUsers = async (req, res) => {
     }
 };
 module.exports.getAllUsers = getAllUsers;
+
+//delete user and his messages from the database
+const deleteUser = async (req, res) => {
+    try {
+        const userId = req.params.userId;
+
+        const user = await userModel.findByIdAndDelete(userId);
+        if (!user) {
+            return res.status(400).json('User not found');
+        }
+
+        //delete messages
+        await messageModel.deleteMany({ senderId: userId });
+        await chatModel.deleteMany({ members: { $in: [userId] } });
+
+        res.status(200).json(user);
+    } catch (err) {
+        console.log('Error deleting user')
+        res.status(500).send(err);
+    }
+};
+module.exports.deleteUser = deleteUser;
