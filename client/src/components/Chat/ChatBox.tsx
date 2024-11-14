@@ -1,8 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../../context/AuthContext"
-import { useChat } from "../../context/chatContext";
+import { useChat } from "../../context/ChatContext";
 import { getRecipientUser } from "../../hooks/getRecipient";
 import { LoadingSpinner } from "../ui/LoadingSpinner";
+
+import dayjs from "dayjs";
+import calendar from "dayjs/plugin/calendar";
+dayjs.extend(calendar);
+
 
 export const ChatBox = () => {
     const { user } = useAuth();
@@ -35,28 +40,17 @@ export const ChatBox = () => {
         }
     };
 
-    const formatDate = (isoString: string) => {
-        const messageDate = new Date(isoString);
-        const today = new Date();
-        const isToday =
-            messageDate.getDate() === today.getDate() &&
-            messageDate.getMonth() === today.getMonth() &&
-            messageDate.getFullYear() === today.getFullYear();
+    const formatDate = (sentDate: string) => {
+        const messageDate = dayjs(sentDate);
+        const today = dayjs();
 
-        if (isToday) {
-            return `Today ${messageDate.toLocaleTimeString('en-il', {
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false
-            })}`;
+        if (messageDate.isSame(dayjs(), 'day')) {
+            return `Today ${messageDate.format('HH:mm')}`;
+        } else if (messageDate.isAfter(today.subtract(10, 'day'))) {
+            return messageDate.format('DD:MM HH:mm');
+        } else {
+            return messageDate.format('DD/MM/YYYY HH:mm');
         }
-        return messageDate.toLocaleString('en-il', {
-            hour: '2-digit',
-            minute: '2-digit',
-            day: '2-digit',
-            month: '2-digit',
-            hour12: false,
-        }).replace(',', '');
     };
 
     return (<>

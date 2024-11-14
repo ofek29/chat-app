@@ -1,21 +1,12 @@
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { baseUrl, fetchFromApi, getFromApi } from "../utils/services";
 import { User } from "../types/user.types";
-import { UserChat } from "../types/chat.types";
+import { Message, UserChat } from "../types/chat.types";
 import { io, Socket } from "socket.io-client";
 
 type OnlineUsers = {
     userId: string,
     socketId: string,
-}
-
-type Message = {
-    _id: string;
-    chatId: string;
-    content: string;
-    createdAt: string;
-    senderId: string;
-    updatedAt: string;
 }
 
 type ChatsError = {
@@ -44,6 +35,7 @@ interface ChatContextType {
 
     sendTextMessage: (textMessage: string, sender: string | undefined, chatId: string | undefined, setTextMessage: React.Dispatch<React.SetStateAction<string>>) => void;
     onlineUsers: OnlineUsers[];
+    newMessage: Message | null;
 };
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -111,7 +103,7 @@ const ChatProvider = ({ children, user }: Props) => {
         };
     }, [socket, currentChat]);
 
-
+    // get all open chat for current user
     useEffect(() => {
         const getUserChats = async () => {
 
@@ -236,6 +228,7 @@ const ChatProvider = ({ children, user }: Props) => {
                 allUsers,
                 sendTextMessage,
                 onlineUsers,
+                newMessage
             }}
         >
             {children}

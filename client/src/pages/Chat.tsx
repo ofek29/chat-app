@@ -2,7 +2,7 @@ import { AllUsersChats } from "../components/Chat/AllUsersChats";
 import { ChatBox } from "../components/Chat/ChatBox";
 import { UsersChat } from "../components/Chat/UsersChat";
 import { useAuth } from "../context/AuthContext";
-import { useChat } from "../context/chatContext";
+import { useChat } from "../context/ChatContext";
 
 export const Chat = () => {
     const { userChats, isUserChatsLoading, updateCurrentChat } = useChat();

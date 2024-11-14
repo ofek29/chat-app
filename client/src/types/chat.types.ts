@@ -4,3 +4,12 @@ export type UserChat = {
     createdAt: string;
     updatedAt: string;
 };
+
+export type Message = {
+    _id: string;
+    chatId: string;
+    content: string;
+    createdAt: string;
+    senderId: string;
+    updatedAt: string;
+}
