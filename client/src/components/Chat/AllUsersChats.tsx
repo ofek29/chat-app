@@ -18,7 +18,8 @@ export const AllUsersChats = () => {
                 type="text"
                 value={searchInput}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => setSearch(event.target.value)}
-                placeholder="Search for user" />
+                placeholder="Search for user"
+            />
 
             {searchInput && filteredUsers.map((currUser, index) => {
                 return (
