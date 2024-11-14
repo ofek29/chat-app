@@ -2,6 +2,12 @@ import { createContext, useCallback, useContext, useEffect, useState } from "rea
 import { baseUrl, fetchFromApi, getFromApi } from "../utils/services";
 import { User } from "../types/user.types";
 import { UserChat } from "../types/chat.types";
+import { io, Socket } from "socket.io-client";
+
+type OnlineUsers = {
+    userId: string,
+    socketId: string,
+}
 
 type Message = {
     _id: string;
@@ -37,6 +43,7 @@ interface ChatContextType {
     allUsers: User[];
 
     sendTextMessage: (textMessage: string, sender: string | undefined, chatId: string | undefined, setTextMessage: React.Dispatch<React.SetStateAction<string>>) => void;
+    onlineUsers: OnlineUsers[];
 };
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -51,10 +58,58 @@ const ChatProvider = ({ children, user }: Props) => {
     const [messagesError, setMessagesError] = useState<ChatsError | null>(null);
 
     const [allUsers, setAllUsers] = useState<User[]>([]);
+    const [socket, setSocket] = useState<Socket | null>(null);
+    const [onlineUsers, setOnlineUsers] = useState<OnlineUsers[]>([]);
 
-    // const [sendMessageError, setSendMessageError] = useState<ChatsError>(null);
-    // const [newMessage, setNewMessage] = useState<Message | null>(null); todo check-----
+    const [sendMessageError, setSendMessageError] = useState<ChatsError>(null);
+    const [newMessage, setNewMessage] = useState<Message | null>(null);
 
+    // connect to socket
+    useEffect(() => {
+        const newSocket = io('http://localhost:3020');
+        setSocket(newSocket);
+        return () => {
+            newSocket.disconnect();
+        };
+    }, [user]);
+
+    // update all online users
+    useEffect(() => {
+        if (socket === null) return;
+        if (user) {
+            socket.emit('addNewUser', user?._id);
+        }
+        socket.on('getOnlineUsers', (res) => {
+            setOnlineUsers(res);
+        })
+        return () => {
+            socket.off('getOnlineUsers');
+        };
+    }, [socket]);
+
+    // socket send message
+    useEffect(() => {
+        if (socket === null) return;
+        const recipientId = currentChat?.members.find((id) => id !== user?._id);
+        socket.emit('sendMessage', { ...newMessage, recipientId });
+    }, [newMessage]);
+
+    // socket receive message
+    useEffect(() => {
+        if (socket === null) return;
+        socket.on('receiveMessage', (message) => {
+            if (currentChat?._id !== message.chatId) return;
+            setMessages((prev) => {
+                if (prev === null) {
+                    return null;
+                }
+                return [...prev, message];
+            });
+        });
+        return () => {
+            socket.off('receiveMessage');
+        };
+    }, [socket, currentChat]);
 
 
     useEffect(() => {
@@ -88,7 +143,6 @@ const ChatProvider = ({ children, user }: Props) => {
                     console.log('error loading Messages', response.error);
                     return setMessagesError(response);
                 }
-
                 setMessages(response);
             }
         }
@@ -96,6 +150,7 @@ const ChatProvider = ({ children, user }: Props) => {
     }, [currentChat]);
 
 
+    // all users. potential chats
     useEffect(() => {
         const getAllUsers = async () => {
             const response = await getFromApi(`${baseUrl}/users`);
@@ -114,17 +169,13 @@ const ChatProvider = ({ children, user }: Props) => {
                 }
                 return !isChat;
             });
-            console.log(filterAllUsers);
-
             setAllUsers(filterAllUsers);
         }
         getAllUsers();
     }, [userChats]);
 
-
+    // create new chat
     const createChat = useCallback(async (firstId: string | undefined, secondId: string | undefined) => {
-        console.log('importing all users');
-
         const response = await fetchFromApi(`${baseUrl}/chats`, JSON.stringify({ firstId, secondId }));
         if (response.error) {
             return console.log('Error creating chat', response);
@@ -133,19 +184,18 @@ const ChatProvider = ({ children, user }: Props) => {
             if (prev === null) {
                 return null;
             }
-            console.log(response);
-
             return [...prev, response];
         });
     }, []);
 
-
+    // update user click on chat
     const updateCurrentChat = useCallback((chat: UserChat) => {
         console.log('updateCurrentChat', chat);
 
         setCurrentChat(chat);
     }, []);
 
+    // send message (update database)
     const sendTextMessage = useCallback(
         async (textMessage: string, sender: string | undefined, chatId: string | undefined, setTextMessage: React.Dispatch<React.SetStateAction<string>>) => {
             if (!textMessage) {
@@ -157,11 +207,10 @@ const ChatProvider = ({ children, user }: Props) => {
                 chatId: chatId
             }))
             if (response.error) {
-                // return setSendMessageError(response);
-                return console.log('Error sending message', response);
+                return setSendMessageError(response);
             }
 
-            // setNewMessage(response);
+            setNewMessage(response);
             setMessages((prev: Message[] | null) => {
                 if (prev === null) {
                     return null;
@@ -186,6 +235,7 @@ const ChatProvider = ({ children, user }: Props) => {
                 createChat,
                 allUsers,
                 sendTextMessage,
+                onlineUsers,
             }}
         >
             {children}

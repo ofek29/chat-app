@@ -8,7 +8,6 @@ import ChatProvider from "./context/chatContext"
 
 function App() {
   const { user } = useAuth();
-  console.log(user);
 
   return (
     <ChatProvider user={user}>

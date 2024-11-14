@@ -26,7 +26,7 @@ type Props = {
 };
 
 interface AuthContextType {
-    user: User | undefined;
+    user: User | null;
 
     registerInfo: RegisterInfo | undefined;
     registerError: UserError | null;
@@ -47,7 +47,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const AuthProvider = ({ children }: Props) => {
 
-    const [user, setUser] = useState<User | undefined>(undefined);
+    const [user, setUser] = useState<User | null>(null);
     const [registerError, setRegisterError] = useState<UserError>(null);
     const [isRegisterLoading, setIsRegisterLoading] = useState<boolean>(false);
     const [loginError, setLoginError] = useState<UserError>(null);
@@ -117,7 +117,7 @@ const AuthProvider = ({ children }: Props) => {
 
     const logoutUser = useCallback(() => {
         localStorage.removeItem('user');
-        setUser(undefined);
+        setUser(null);
     }, []);
 
 

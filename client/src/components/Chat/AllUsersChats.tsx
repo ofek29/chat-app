@@ -12,7 +12,7 @@ export const AllUsersChats = () => {
 
     return (
         <div
-            className="w-[20%] text-lg rounded m-2 p-2 border-gray-500">
+            className="w-[20%] min-w-[180px] text-lg rounded m-2 p-2 border-gray-500">
             <input
                 className="w-full py-1 px-2 mb-4 bg-inherit border-[0.5px] border-gray-500 rounded-xl"
                 type="text"
@@ -24,7 +24,7 @@ export const AllUsersChats = () => {
             {searchInput && filteredUsers.map((currUser, index) => {
                 return (
                     <div
-                        className="text-center mb-3 py-1 px-2 border border-gray-500 rounded-lg w-40"
+                        className="text-center truncate mb-3 py-1 px-2 border border-gray-500 rounded-lg w-40"
                         key={index}
                         onClick={() => createChat(user?._id, currUser?._id)}
                     >
