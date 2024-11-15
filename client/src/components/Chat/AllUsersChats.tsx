@@ -14,7 +14,7 @@ export const AllUsersChats = () => {
         <div
             className="w-[20%] min-w-[180px] text-lg rounded m-2 p-2 border-gray-500">
             <input
-                className="w-full py-1 px-2 mb-4 bg-inherit border-[0.5px] border-gray-500 rounded-xl"
+                className="w-full py-1 px-2 mb-4 bg-inherit border-[0.5px] border-gray-500 outline-none rounded-xl"
                 type="text"
                 value={searchInput}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => setSearch(event.target.value)}
