@@ -1,5 +1,35 @@
-import { test, expect } from '@playwright/test';
-import { generateString, generateStrongPassword } from './auth.spec';
+import { test, expect, Page } from '@playwright/test';
+import generator from 'generate-password';
+
+async function registerUser(page: Page) {
+  const email = `${generateString()}@${generateString()}.com`;
+  const name = generateString();
+  const password = generateStrongPassword();
+  await page.goto('http://localhost:5173/register');
+  await page.getByPlaceholder('Name').fill(name);
+  await page.getByPlaceholder('Email').fill(email);
+  await page.getByPlaceholder('Password').fill(password);
+  await page.getByRole('button', { name: 'Register' }).click();
+  await expect(page.getByRole('link', { name: name })).toBeVisible();
+  return { name, email, password };
+}
+
+async function sendMessage(page: Page, name: string) {
+  await page.locator('div.flex.items-center p.font-semibold').filter({ hasText: name }).click();
+  const randomMessage = generateString();
+  await page.getByPlaceholder('Type your message...').fill(randomMessage);
+  await page.getByPlaceholder('Type your message...').press('Enter');
+  return randomMessage;
+}
+
+// //send massage
+// test('send message', async ({ page }) => {
+//   const { name } = await registerUser(page)
+//   await page.getByRole('link', { name: 'Logout' }).click();
+//   registerUser(page);
+//   sendMessage(page, name);
+
+// });
 
 
 test('two users in the same chat room messages', async ({ browser }) => {
@@ -10,41 +40,48 @@ test('two users in the same chat room messages', async ({ browser }) => {
   const user2Page = await user2Context.newPage();
 
   // Register 2 users
-  await user1Page.goto('http://localhost:5173/register');
-  const user1Name = generateString();
-  await user1Page.getByPlaceholder('Name').fill(user1Name);
-  await user1Page.getByPlaceholder('Email').fill(`${generateString()}@${generateString()}.com`);
-  await user1Page.getByPlaceholder('Password').fill(generateStrongPassword());
-  await user1Page.getByRole('button', { name: 'Register' }).click();
-
-  await user2Page.goto('http://localhost:5173/register');
-  const user2Name = generateString();
-  await user2Page.getByPlaceholder('Name').fill(user2Name);
-  await user2Page.getByPlaceholder('Email').fill(`${generateString()}@${generateString()}.com`);
-  await user2Page.getByPlaceholder('Password').fill(generateStrongPassword());
-  await user2Page.getByRole('button', { name: 'Register' }).click();
+  const { name: user1Name } = await registerUser(user1Page);
+  const { name: user2Name } = await registerUser(user2Page);
 
   // send messages and see if they received
-  await user1Page.goto('http://localhost:5173/');
+  await user1Page.goto('http://localhost:5173');
+
   await user1Page.getByPlaceholder('Search for user').fill(user2Name);
-  // await user1Page.locator('div').filter({ hasText: user2Name }).click();
-  await user1Page.locator('.text-center mb-3 py-1 px-2 border border-gray-500 rounded-lg w-40').filter({ hasText: user2Name }).click();
-  await user1Page.locator('p').filter({ hasText: user2Name }).click();
-  const randomMessage1 = generateString();
-  await user1Page.getByPlaceholder('Type your message...').fill(randomMessage1);
-  await user1Page.getByPlaceholder('Type your message...').press('Enter');
+  await user1Page.locator('div.text-center.w-40').filter({ hasText: user2Name }).click();
 
-  await user2Page.goto('http://localhost:5173/');
-  await user2Page.locator('p').filter({ hasText: user1Name }).click();
-  await expect(user2Page.getByText(randomMessage1)).toBeVisible();
-  const randomMessage2 = generateString();
-  await user2Page.getByPlaceholder('Type your message...').fill(randomMessage2);
-  await user2Page.getByPlaceholder('Type your message...').press('Enter');
+  const randomMessage1 = await sendMessage(user1Page, user2Name);
 
-  await user1Page.goto('http://localhost:5173/');
-  await user1Page.locator('p').filter({ hasText: user2Name }).click();
-  await expect(user1Page.getByText(randomMessage2)).toBeVisible();
+  await user2Page.goto('http://localhost:5173');
+  const randomMessage2 = await sendMessage(user2Page, user1Name);
+  await expect(user2Page.getByText(randomMessage1).nth(1)).toBeVisible();
+
+  await user1Page.goto('http://localhost:5173'); //todo fix socket!
+  await user1Page.locator('div.flex.items-center p.font-semibold').filter({ hasText: user2Name }).click();
+  await expect(user1Page.getByText(randomMessage2).nth(1)).toBeVisible();
 
   await user1Context.close();
   await user2Context.close();
 });
+
+export function generateString() {
+  const length = Math.floor(Math.random() * 20) + 3;
+  return generator.generate({
+    length: length,
+    uppercase: true,
+    lowercase: true,
+    numbers: true,
+    symbols: false,
+  });
+}
+
+export function generateStrongPassword() {
+  const length = Math.floor(Math.random() * 22) + 8;
+  return generator.generate({
+    length: length,
+    uppercase: true,
+    lowercase: true,
+    numbers: true,
+    symbols: true,
+    strict: true
+  });
+}

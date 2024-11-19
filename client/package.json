@@ -9,8 +9,12 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "server": "cd ../server && npm run dev",
+    "server:test": "cd ../server && npm run start:test",
     "socket": "cd ../socket && npm run dev",
-    "start": "concurrently \"npm run dev\" \"npm run server\" \"npm run socket\""
+    "socket:test": "cd ../socket && npm run start:test",
+    "start": "concurrently \"npm run dev\" \"npm run server\" \"npm run socket\"",
+    "start:test": "concurrently --kill-others --kill-others-on-fail \"npm run dev\" \"npm run server:test\" \"npm run socket:test\"",
+    "test": "playwright test"
   },
   "dependencies": {
     "dayjs": "^1.11.13",

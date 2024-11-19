@@ -93,6 +93,8 @@ const ChatProvider = ({ children, user }: Props) => {
             if (currentChat?._id !== message.chatId) return;
             setMessages((prev) => {
                 if (prev === null) {
+                    console.log('receiveMessage: im null');
+
                     return null;
                 }
                 return [...prev, message];
@@ -182,8 +184,6 @@ const ChatProvider = ({ children, user }: Props) => {
 
     // update user click on chat
     const updateCurrentChat = useCallback((chat: UserChat) => {
-        console.log('updateCurrentChat', chat);
-
         setCurrentChat(chat);
     }, []);
 

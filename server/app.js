@@ -23,10 +23,57 @@ app.use('/api/chats', chatRoutes);
 app.use('/api/messages', messageRoutes);
 
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
     console.log(`Server listening on port ${port}`)
-})
+});
 
-mongoose.connect(uri)
-    .then(() => console.log("mongoose connected"))
-    .catch(err => console.error("mongoose connection failed:", err));
+// Connect to MongoDB
+let mongoServer;
+const connectToDatabase = async () => {
+    let mongoUri;
+    if (process.env.NODE_ENV === 'test') {
+        console.log('local mongodb');
+        const { MongoMemoryServer } = require('mongodb-memory-server');
+        mongoServer = await MongoMemoryServer.create();
+        mongoUri = mongoServer.getUri();
+    } else {
+        mongoUri = process.env.MONGO_URI;
+    }
+
+    try {
+        await mongoose.connect(mongoUri);
+        console.log("mongoose connected");
+    } catch (error) {
+        console.error("mongoose connection failed:", error)
+    }
+};
+
+connectToDatabase();
+
+const closeDatabase = async () => {
+    try {
+        if (process.env.NODE_ENV === 'test') {
+            await mongoServer.stop()
+        }
+        await mongoose.connection.close();
+        console.log("Mongoose connection closed.");
+    } catch (err) {
+        console.error("Error closing Mongoose connection:", err);
+    }
+};
+
+const shutdownServer = async () => {
+    console.log("Shutting down...");
+    try {
+        await closeDatabase(); // Close Mongoose connection
+        server.close(() => {
+            console.log("Server stopped.");
+            process.exit(0);
+        });
+    } catch (error) {
+        console.log('Failed to close server', error);
+    }
+};
+
+process.on('SIGINT', shutdownServer);
+process.on('SIGTERM', shutdownServer);

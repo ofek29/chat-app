@@ -5,6 +5,7 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
+    "start:test": "NODE_ENV=test node app.js",
     "test": "jest"
   },
   "author": "ofek",

@@ -1,6 +1,18 @@
-import test, { expect } from "@playwright/test";
+import test, { expect, Page } from "@playwright/test";
 import generator from 'generate-password';
 
+async function registerUser(page: Page) {
+    const email = `${generateString()}@${generateString()}.com`;
+    const name = generateString();
+    const password = generateStrongPassword();
+    await page.goto('http://localhost:5173/register');
+    await page.getByPlaceholder('Name').fill(name);
+    await page.getByPlaceholder('Email').fill(email);
+    await page.getByPlaceholder('Password').fill(password);
+    await page.getByRole('button', { name: 'Register' }).click();
+    await expect(page.getByRole('link', { name: name })).toBeVisible();
+    return { name, email, password };
+}
 
 test('test week password', async ({ page }) => {
     await page.goto('http://localhost:5173/register');
@@ -11,7 +23,6 @@ test('test week password', async ({ page }) => {
     await expect(page.getByText('passwords must be at least 8 characters and contain 1 uppercase, 1 lowercase, 1 number and 1 symbols')).toBeVisible();
 });
 
-
 test('test week password short', async ({ page }) => {
     await page.goto('http://localhost:5173/register');
     await page.getByPlaceholder('Name').fill(generateString());
@@ -21,20 +32,14 @@ test('test week password short', async ({ page }) => {
     await expect(page.getByText('passwords must be at least 8 characters and contain 1 uppercase, 1 lowercase, 1 number and 1 symbols')).toBeVisible();
 });
 
-const email = `${generateString()}@${generateString()}.com`;
-const name = generateString();
-const password = generateStrongPassword();
-
-test('test new register success', async ({ page }) => {
-    await page.goto('http://localhost:5173/register');
-    await page.getByPlaceholder('Name').fill(name);
-    await page.getByPlaceholder('Email').fill(email);
-    await page.getByPlaceholder('Password').fill(password);
-    await page.getByRole('button', { name: 'Register' }).click();
-    await expect(page.getByRole('link', { name: name })).toBeVisible();
+test('test new register success ', async ({ page }) => {
+    await registerUser(page);
 });
 
 test('test register: user already exists', async ({ page }) => {
+    const { email } = await registerUser(page);
+    await page.getByRole('link', { name: 'Logout' }).click();
+
     await page.goto('http://localhost:5173/register');
     await page.getByPlaceholder('Name').fill(generateString());
     await page.getByPlaceholder('Email').fill(email);
@@ -44,6 +49,9 @@ test('test register: user already exists', async ({ page }) => {
 });
 
 test('test login: wrong password', async ({ page }) => {
+    const { email } = await registerUser(page);
+    await page.getByRole('link', { name: 'Logout' }).click();
+
     await page.goto('http://localhost:5173/login');
     await page.getByPlaceholder('Email').fill(email);
     await page.getByPlaceholder('Password').fill(generateStrongPassword());
@@ -60,6 +68,9 @@ test('test login: wrong email', async ({ page }) => {
 });
 
 test('test login success and logout', async ({ page }) => {
+    const { name, email, password } = await registerUser(page);
+    await page.getByRole('link', { name: 'Logout' }).click();
+
     await page.goto('http://localhost:5173/login');
     await page.getByPlaceholder('Email').fill(email);
     await page.getByPlaceholder('Password').fill(password);
@@ -88,7 +99,7 @@ export function generateStrongPassword() {
         lowercase: true,
         numbers: true,
         symbols: true,
-        strict: false
+        strict: true
     });
 }
 
