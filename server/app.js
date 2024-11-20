@@ -8,9 +8,6 @@ const userRoutes = require('./Routes/userRoutes');
 const chatRoutes = require('./Routes/chatRoutes');
 const messageRoutes = require('./Routes/messageRoutes');
 
-const port = process.env.PORT || 3000;
-const uri = process.env.MONGOOSE_URI;
-
 app.use(express.json());
 app.use(cors())
 
@@ -22,7 +19,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/chats', chatRoutes);
 app.use('/api/messages', messageRoutes);
 
-
+const port = process.env.PORT || 3000;
 const server = app.listen(port, () => {
     console.log(`Server listening on port ${port}`)
 });
@@ -37,7 +34,7 @@ const connectToDatabase = async () => {
         mongoServer = await MongoMemoryServer.create();
         mongoUri = mongoServer.getUri();
     } else {
-        mongoUri = process.env.MONGO_URI;
+        mongoUri = process.env.MONGOOSE_URI;
     }
 
     try {

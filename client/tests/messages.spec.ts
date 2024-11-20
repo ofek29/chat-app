@@ -22,15 +22,6 @@ async function sendMessage(page: Page, name: string) {
   return randomMessage;
 }
 
-// //send massage
-// test('send message', async ({ page }) => {
-//   const { name } = await registerUser(page)
-//   await page.getByRole('link', { name: 'Logout' }).click();
-//   registerUser(page);
-//   sendMessage(page, name);
-
-// });
-
 
 test('two users in the same chat room messages', async ({ browser }) => {
   // Open browser context
@@ -53,11 +44,11 @@ test('two users in the same chat room messages', async ({ browser }) => {
 
   await user2Page.goto('http://localhost:5173');
   const randomMessage2 = await sendMessage(user2Page, user1Name);
-  await expect(user2Page.getByText(randomMessage1).nth(1)).toBeVisible();
+  await expect(user2Page.locator('div.break-words.hyphens-auto.max-w-60').filter({ hasText: randomMessage1 })).toBeVisible();
 
   await user1Page.goto('http://localhost:5173'); //todo fix socket!
   await user1Page.locator('div.flex.items-center p.font-semibold').filter({ hasText: user2Name }).click();
-  await expect(user1Page.getByText(randomMessage2).nth(1)).toBeVisible();
+  await expect(user1Page.locator('div.break-words.hyphens-auto.max-w-60').filter({ hasText: randomMessage2 })).toBeVisible();
 
   await user1Context.close();
   await user2Context.close();

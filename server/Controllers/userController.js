@@ -9,7 +9,7 @@ const chatModel = require('../Models/chatModel');
 //crate token for user authentication
 const createToken = (_id) => {
     const jwtKey = process.env.JWT_SECRET_KEY;
-    return jwt.sign({ _id }, jwtKey, { expiresIn: '3d' });
+    return jwt.sign({ _id }, jwtKey, { expiresIn: '5h' });
 }
 
 //register user and save to db
@@ -31,7 +31,7 @@ const registerUser = async (req, res) => {
         }
         if (!validator.isStrongPassword(password)) {
             return res.status(400).json
-                ('passwords must be at least 8 characters and contain 1 uppercase, 1 lowercase, 1 number and 1 symbols');
+                ('passwords must be at least 8 characters and contain 1 uppercase, lowercase, number and symbol');
         }
 
         user = new userModel({ name, email, password });

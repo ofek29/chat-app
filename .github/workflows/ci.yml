@@ -1,0 +1,49 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test-app:
+    name: Test App
+    runs-on: ubuntu-latest
+
+    steps:
+    # Check out repository code
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Create env file
+      run: echo "JWT_SECRET_KEY=D4fg0Eg6pk" >> .env
+
+    # Set up Node.js
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+
+    # Install dependencies and run app tests
+    - name: Setup server
+      working-directory: ./server
+      run: |
+        npm install
+        npm run start:test
+
+    - name: Setup socket
+      working-directory: ./socket
+      run: |
+        npm install
+        npm start
+
+    - name: setup client
+      working-directory: ./client
+      run: |
+        npm install
+        npx playwright install
+        npm run dev
+        npm run test

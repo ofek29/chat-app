@@ -3,7 +3,6 @@ const { Server } = require("socket.io");
 const io = new Server({ cors: 'http://localhost:5173' });
 console.log('New socket server');
 
-
 let onlineUsers = [];
 
 io.on('connection', (socket) => {
@@ -22,8 +21,6 @@ io.on('connection', (socket) => {
 
     //add message to online users
     socket.on('sendMessage', (message) => {
-        console.log(onlineUsers);
-
         const user = onlineUsers.find(user => user.userId === message.recipientId);
         if (user) {
             console.log(user, message);
@@ -32,15 +29,16 @@ io.on('connection', (socket) => {
         }
     });
 
+    //disconnect user when closing browser
     socket.on('disconnect', () => {
         onlineUsers = onlineUsers.filter((user) => user.socketId !== socket.id);
         io.emit('getOnlineUsers', onlineUsers);
         console.log('user disconnected', onlineUsers);
-
     })
 });
 
-io.listen(3020);
+const port = process.env.PORT || 3020;
+io.listen(port);
 
 //Shutdown the socket server
 const shutdownSocket = async () => {

@@ -58,7 +58,8 @@ const ChatProvider = ({ children, user }: Props) => {
 
     // connect to socket
     useEffect(() => {
-        const newSocket = io('http://localhost:3020');
+        const port = import.meta.env.VITE_SOCKET_PORT || 3020;
+        const newSocket = io(`http://localhost:${port}`);
         setSocket(newSocket);
         return () => {
             newSocket.disconnect();

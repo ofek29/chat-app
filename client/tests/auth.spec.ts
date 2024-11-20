@@ -20,7 +20,7 @@ test('test week password', async ({ page }) => {
     await page.getByPlaceholder('Email').fill(`${generateString()}@${generateString()}.com`);
     await page.getByPlaceholder('Password').fill(generateWeekPassword());
     await page.getByRole('button', { name: 'Register' }).click();
-    await expect(page.getByText('passwords must be at least 8 characters and contain 1 uppercase, 1 lowercase, 1 number and 1 symbols')).toBeVisible();
+    await expect(page.getByText('passwords must be at least 8 characters and contain 1 uppercase, lowercase, number and symbol')).toBeVisible();
 });
 
 test('test week password short', async ({ page }) => {
@@ -29,7 +29,7 @@ test('test week password short', async ({ page }) => {
     await page.getByPlaceholder('Email').fill(`${generateString()}@${generateString()}.com`);
     await page.getByPlaceholder('Password').fill(generateShortPassword());
     await page.getByRole('button', { name: 'Register' }).click();
-    await expect(page.getByText('passwords must be at least 8 characters and contain 1 uppercase, 1 lowercase, 1 number and 1 symbols')).toBeVisible();
+    await expect(page.getByText('passwords must be at least 8 characters and contain 1 uppercase, lowercase, number and symbol')).toBeVisible();
 });
 
 test('test new register success ', async ({ page }) => {

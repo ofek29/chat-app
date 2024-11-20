@@ -1,5 +1,5 @@
 
-export const baseUrl = import.meta.env.VITE_API_BASE_URL;
+export const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
 
 export const fetchFromApi = async (url: string, body: string) => {
 
