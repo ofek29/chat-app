@@ -32,13 +32,13 @@ jobs:
       working-directory: ./server
       run: |
         npm install
-        npm run start:test
+        npm run start:test &
 
     - name: Setup socket
       working-directory: ./socket
       run: |
         npm install
-        npm start
+        npm start &
 
     - name: setup client
       working-directory: ./client
