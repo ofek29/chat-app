@@ -40,7 +40,7 @@ interface ChatContextType {
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
-const ChatProvider = ({ children, user }: Props) => {
+export const ChatProvider = ({ children, user }: Props) => {
     const [userChats, setUserChats] = useState<UserChat[] | null>(null);
     const [isUserChatsLoading, setIsUserChatsLoading] = useState(false);
     const [userChatsError, setUserChatsError] = useState(null);
@@ -244,5 +244,3 @@ export const useChat = () => {
     }
     return context;
 }
-
-export default ChatProvider;

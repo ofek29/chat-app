@@ -45,8 +45,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const AuthProvider = ({ children }: Props) => {
-
+export const AuthProvider = ({ children }: Props) => {
     const [user, setUser] = useState<User | null>(null);
     const [registerError, setRegisterError] = useState<UserError>(null);
     const [isRegisterLoading, setIsRegisterLoading] = useState<boolean>(false);
@@ -142,7 +141,6 @@ const AuthProvider = ({ children }: Props) => {
         </AuthContext.Provider>
     )
 }
-export default AuthProvider
 
 export const useAuth = () => {
     const context = useContext(AuthContext);
