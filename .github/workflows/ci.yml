@@ -27,6 +27,9 @@ jobs:
       with:
         node-version: 18
 
+    - name: Install dependencies
+      run: npm ci
+
     # Install dependencies and run app tests
     - name: Setup server
       working-directory: ./server
@@ -44,6 +47,11 @@ jobs:
       working-directory: ./client
       run: |
         npm install
-        npx playwright install
         npm run dev &
-        npm run test
+    
+    - name: install playwright browser
+      working-directory: ./client
+      run: npx playwright install --with-deps
+
+    - name: Run Playwright tests
+      run: npx playwright test
