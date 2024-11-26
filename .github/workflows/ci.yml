@@ -44,9 +44,9 @@ jobs:
       run: |
         npm ci
         npm run start:test 
-        'npx wait-on --timeout 5000 http://localhost:3000'
-        'npx wait-on --timeout 5000 http://localhost:3020'
-        'npx wait-on --timeout 5000 http://localhost:5173'
+        npx wait-on --timeout 5000 http://localhost:3000
+        npx wait-on --timeout 5000 http://localhost:3020
+        npx wait-on --timeout 5000 http://localhost:5173
   
     - name: install playwright browser
       working-directory: ./client
