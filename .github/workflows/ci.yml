@@ -49,7 +49,7 @@ jobs:
     
     - name: install playwright browser
       working-directory: ./client
-      run: npx playwright install --with-deps &
+      run: npx playwright install --with-deps
 
     - name: Run Playwright tests
       working-directory: ./client
