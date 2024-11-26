@@ -1,4 +1,6 @@
 const { Server } = require("socket.io");
+require('dotenv').config();
+
 
 const io = new Server({ cors: 'http://localhost:5173' });
 console.log('New socket server');
@@ -39,6 +41,8 @@ io.on('connection', (socket) => {
 
 const port = process.env.PORT || 3020;
 io.listen(port);
+console.log('socket listening on port ', port);
+
 
 //Shutdown the socket server
 const shutdownSocket = async () => {
