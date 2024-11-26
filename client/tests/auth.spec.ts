@@ -80,7 +80,7 @@ test('test login success and logout', async ({ page }) => {
     await expect(page.getByRole('heading', { name: 'Sign In' })).toBeVisible();
 });
 
-export function generateString() {
+function generateString() {
     const length = Math.floor(Math.random() * 20) + 3;
     return generator.generate({
         length: length,
@@ -91,7 +91,7 @@ export function generateString() {
     });
 }
 
-export function generateStrongPassword() {
+function generateStrongPassword() {
     const length = Math.floor(Math.random() * 22) + 8;
     return generator.generate({
         length: length,

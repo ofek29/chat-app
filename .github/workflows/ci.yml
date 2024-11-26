@@ -33,19 +33,20 @@ jobs:
       working-directory: ./server
       run: |
         npm ci
-        npm run start:test &
 
     - name: Setup socket
       working-directory: ./socket
       run: |
         npm ci
-        npm start &
 
     - name: setup client
       working-directory: ./client
       run: |
         npm ci
-        npm run dev &
+        
+    - name: start app   
+      run: npm run start:test 
+      wait-on: 'npx wait-on --timeout 5000 http://localhost:3000'
     
     - name: install playwright browser
       working-directory: ./client
