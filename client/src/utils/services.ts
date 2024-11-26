@@ -1,5 +1,5 @@
-
-export const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
+const port = import.meta.env.VITE_API_PORT || 3000;
+export const baseUrl = `http://localhost:${port}/api`;
 
 export const fetchFromApi = async (url: string, body: string) => {
 

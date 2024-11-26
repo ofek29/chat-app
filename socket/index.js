@@ -41,7 +41,7 @@ io.on('connection', (socket) => {
 
 const port = process.env.PORT || 3020;
 io.listen(port);
-console.log('socket listening on port ', port);
+console.log('socket listening on port', port);
 
 
 //Shutdown the socket server
