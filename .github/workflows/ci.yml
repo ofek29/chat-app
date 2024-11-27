@@ -42,7 +42,10 @@ jobs:
       working-directory: client
       run: |
         npm ci
-        npm run start:test &&
+    
+    - name: Run app
+      working-directory: client
+      run: npm run start:test
   
     - name: install playwright browser
       working-directory: client
