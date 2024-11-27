@@ -30,22 +30,21 @@ jobs:
   
     - name: Setup server
       working-directory: server
-      run: |
-        npm ci
+      run: npm ci
 
     - name: Setup socket
       working-directory: socket
-      run: |
-        npm ci
+      run: npm ci
 
     - name: setup client
       working-directory: client
-      run: |
-        npm ci
+      run: npm ci
     
     - name: Run app
       working-directory: client
-      run: npm run start:test
+      run: | 
+        nohup npm run start:test & 
+        sleep 10
   
     - name: install playwright browser
       working-directory: client
