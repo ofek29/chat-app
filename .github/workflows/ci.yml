@@ -25,34 +25,31 @@ jobs:
         node-version: lts/*
 
     - name: Create env file
-      working-directory: ./server
+      working-directory: server
       run: echo "JWT_SECRET_KEY=D4fg0Eg6pk" >> .env
   
-    # Install dependencies and run app tests
     - name: Setup server
-      working-directory: ./server
+      working-directory: server
       run: |
         npm ci
 
     - name: Setup socket
-      working-directory: ./socket
+      working-directory: socket
       run: |
         npm ci
 
     - name: setup client
-      working-directory: ./client
+      working-directory: client
       run: |
         npm ci
-        npm run start:test &
-        npx wait-on --timeout 5000 http://localhost:3000
-        npx wait-on --timeout 5000 http://localhost:5173
+        npm run start:test &&
   
     - name: install playwright browser
-      working-directory: ./client
+      working-directory: client
       run: npx playwright install --with-deps
 
     - name: Run Playwright tests
-      working-directory: ./client
+      working-directory: client
       run: npx playwright test --reporter=line
 
     - uses: actions/upload-artifact@v4
