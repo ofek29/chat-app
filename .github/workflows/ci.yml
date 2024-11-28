@@ -23,29 +23,27 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: lts/*
-
-    - name: Create env file
-      working-directory: server
-      run: echo "JWT_SECRET_KEY=D4fg0Eg6pk" >> .env
   
     - name: Setup server
       working-directory: server
-      run: npm ci
+      run: npm i
+      env:
+        JWT_SECRET_KEY: ${{secrets.JWT_SECRET_KEY}}
 
     - name: Setup socket
       working-directory: socket
-      run: npm ci
+      run: npm i
 
     - name: setup client
       working-directory: client
-      run: npm ci
+      run: npm i
     
     - name: Run app
       working-directory: client
       run: | 
         nohup npm run start:test & 
         sleep 10
-  
+      
     - name: install playwright browser
       working-directory: client
       run: npx playwright install --with-deps

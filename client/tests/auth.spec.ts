@@ -1,11 +1,18 @@
 import test, { expect, Page } from "@playwright/test";
 import generator from 'generate-password';
 
+
+// const VITE_SERVER_HOST =  .env.VITE_SERVER_PORT || 'localhost';
+// const VITE_SERVER_PORT = '5173';
+
+// const siteUrl = ``
+
 async function registerUser(page: Page) {
     const email = `${generateString()}@${generateString()}.com`;
     const name = generateString();
     const password = generateStrongPassword();
-    await page.goto('http://localhost:5173/register');
+    await page.goto('0.0.0.0:5173/register');
+    // await page.goto('http://localhost:5173/register');
     await page.getByPlaceholder('Name').fill(name);
     await page.getByPlaceholder('Email').fill(email);
     await page.getByPlaceholder('Password').fill(password);

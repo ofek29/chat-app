@@ -23,7 +23,7 @@ export const ChatProvider = ({ children, user }: Props) => {
     const [allUsers, setAllUsers] = useState<User[]>([]);
     const [socket, setSocket] = useState<Socket | null>(null);
     const [onlineUsers, setOnlineUsers] = useState<OnlineUsers[]>([]);
-    const [sendMessageError, setSendMessageError] = useState<ChatsError>(null);
+    // const [sendMessageError, setSendMessageError] = useState<ChatsError>(null);
     const [newMessage, setNewMessage] = useState<Message | null>(null);
     const [updateLastMessage, setUpdateLastMessage] = useState<Message | null>(null);
 
@@ -83,7 +83,7 @@ export const ChatProvider = ({ children, user }: Props) => {
         };
     }, [socket, currentChat]);
 
-    // send with socket user chats when new open chat opened
+    // send with socket user chats when new chat opened
     useEffect(() => {
         if (socket === null) return;
         const recipientId = newChat?.members.find((id) => id !== user?._id);
@@ -201,7 +201,7 @@ export const ChatProvider = ({ children, user }: Props) => {
                 chatId: chatId
             }))
             if (response.error) {
-                return setSendMessageError(response);
+                return console.log('Error sending message', response);
             }
             setNewMessage(response);
             setMessages((prev: Message[] | null) => {

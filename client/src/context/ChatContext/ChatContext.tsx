@@ -19,6 +19,5 @@ interface ChatContextType {
     updateLastMessage: Message | null;
 };
 
-
 export const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
