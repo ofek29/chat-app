@@ -3,7 +3,7 @@ import { Login } from "./pages/Login"
 import { Chat } from "./pages/Chat"
 import { Register } from "./pages/Register"
 import { NavBar } from "./components/NavBar/NavBar"
-import { useAuth } from "./context/AuthContext"
+import { useAuth } from "./context/AuthContext/useAuth"
 import { ChatProvider } from "./context/ChatContext/ChatProvider"
 
 function App() {

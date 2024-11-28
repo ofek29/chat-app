@@ -1,49 +1,11 @@
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
-import { baseUrl, fetchFromApi } from "../utils/services";
-import { User } from "../types/user.types";
-
-
-
-type RegisterInfo = {
-    name: string,
-    email: string,
-    password: string
-};
-
-type LoginInfo = {
-    email: string,
-    password: string
-};
-
-type UserError = {
-    error: boolean,
-    response: string,
-    message?: string
-} | null;
+import { useState, useEffect, useCallback } from "react";
+import { LoginInfo, RegisterInfo, User, UserError } from "../../types/user.types";
+import { fetchFromApi, baseUrl } from "../../utils/services";
+import { AuthContext } from "./AuthContext";
 
 type Props = {
     children: React.ReactNode
 };
-
-interface AuthContextType {
-    user: User | null;
-
-    registerInfo: RegisterInfo | undefined;
-    registerError: UserError | null;
-    updateRegisterInfo(name: string, value: string): void;
-    registerUser(e: React.FormEvent<HTMLFormElement>): void;
-    isRegisterLoading: boolean;
-
-    loginInfo: LoginInfo | undefined;
-    loginError: UserError | null;
-    updateLoginInfo(name: string, value: string): void;
-    loginUser(e: React.FormEvent<HTMLFormElement>): void;
-    isLoginLoading: boolean;
-
-    logoutUser(): void;
-};
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: Props) => {
     const [user, setUser] = useState<User | null>(null);
@@ -73,14 +35,12 @@ export const AuthProvider = ({ children }: Props) => {
         setRegisterInfo((prev) => ({
             ...prev, [name]: value
         }));
-        // setRegisterInfo({ ...registerInfo, [name]: value });
     }, []);
 
     const updateLoginInfo = useCallback((name: string, value: string) => {
         setLoginInfo((prev) => ({
             ...prev, [name]: value
         }));
-        // setLoginInfo({ ...loginInfo, [name]: value });
     }, []);
 
     const registerUser = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
@@ -119,7 +79,6 @@ export const AuthProvider = ({ children }: Props) => {
         setUser(null);
     }, []);
 
-
     return (
         <AuthContext.Provider
             value={{
@@ -141,12 +100,3 @@ export const AuthProvider = ({ children }: Props) => {
         </AuthContext.Provider>
     )
 }
-
-export const useAuth = () => {
-    const context = useContext(AuthContext);
-    if (!context) {
-        throw new Error('useAuth must be used within an AuthContextProvider');
-    }
-    return context;
-}
-

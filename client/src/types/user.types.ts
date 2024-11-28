@@ -4,3 +4,21 @@ export type User = {
     email: string,
     token: string
 } | null;
+
+export type RegisterInfo = {
+    name: string,
+    email: string,
+    password: string
+};
+
+export type LoginInfo = {
+    email: string,
+    password: string
+};
+
+export type UserError = {
+    error: boolean,
+    response: string,
+    message?: string
+} | null;
+

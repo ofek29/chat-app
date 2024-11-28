@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/AuthContext/useAuth";
 import { useChat } from "../../context/ChatContext/useChat";
 
 export const AllUsersChats = () => {

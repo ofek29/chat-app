@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useAuth } from "../../context/AuthContext"
+import { useAuth } from "../../context/AuthContext/useAuth"
 import { useChat } from "../../context/ChatContext/useChat";
 import { GetRecipientUser } from "../../hooks/getRecipient";
 import { LoadingSpinner } from "../ui/LoadingSpinner";

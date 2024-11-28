@@ -1,7 +1,7 @@
 import { AllUsersChats } from "../components/Chat/AllUsersChats";
 import { ChatBox } from "../components/Chat/ChatBox";
 import { UsersChat } from "../components/Chat/UsersChat";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/AuthContext/useAuth";
 import { useChat } from "../context/ChatContext/useChat";
 
 export const Chat = () => {
