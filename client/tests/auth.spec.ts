@@ -11,8 +11,8 @@ async function registerUser(page: Page) {
     const email = `${generateString()}@${generateString()}.com`;
     const name = generateString();
     const password = generateStrongPassword();
-    await page.goto('0.0.0.0:5173/register');
-    // await page.goto('http://localhost:5173/register');
+    // await page.goto('0.0.0.0:5173/register');
+    await page.goto('http://localhost:5173/register');
     await page.getByPlaceholder('Name').fill(name);
     await page.getByPlaceholder('Email').fill(email);
     await page.getByPlaceholder('Password').fill(password);
