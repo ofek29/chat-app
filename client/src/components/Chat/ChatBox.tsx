@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../../context/AuthContext"
-import { useChat } from "../../context/ChatContext";
-import { getRecipientUser } from "../../hooks/getRecipient";
+import { useChat } from "../../context/ChatContext/useChat";
+import { GetRecipientUser } from "../../hooks/getRecipient";
 import { LoadingSpinner } from "../ui/LoadingSpinner";
 
 import dayjs from "dayjs";
@@ -12,7 +12,7 @@ dayjs.extend(calendar);
 export const ChatBox = () => {
     const { user } = useAuth();
     const { currentChat, messages, isMessagesLoading, sendTextMessage } = useChat();
-    const { recipientUser } = getRecipientUser(currentChat, user);
+    const { recipientUser } = GetRecipientUser(currentChat, user);
     const [textMessage, setTextMessage] = useState<string>('');
 
     //auto scroll to bottom of chat 
@@ -23,11 +23,12 @@ export const ChatBox = () => {
         }
     }, [messages]);
 
-    if (!recipientUser) return (
+    if (!recipientUser || !currentChat) return (
         <p className="w-[50%] text-center relative top-[50%] text-xl">
             Select chat...
         </p>
     )
+
     if (isMessagesLoading) return <LoadingSpinner text='Loading messages...' />;
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

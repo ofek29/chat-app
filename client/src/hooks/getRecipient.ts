@@ -11,11 +11,10 @@ type RecipientUser = {
     createdAt: string,
     updatedAt: string,
 }
-export const getRecipientUser = (chat: UserChat | null, user: User) => {
 
+export const GetRecipientUser = (chat: UserChat | null, user: User) => {
     const [recipientUser, setRecipientUser] = useState<RecipientUser | null>(null);
     const [error, setError] = useState(null);
-
     const recipientId = chat?.members.find((id) => id !== user?._id);
     useEffect(() => {
         const getUser = async () => {
@@ -27,7 +26,6 @@ export const getRecipientUser = (chat: UserChat | null, user: User) => {
             }
             setRecipientUser(response);
         }
-
         getUser();
     }, [recipientId]);
     return { recipientUser, error };

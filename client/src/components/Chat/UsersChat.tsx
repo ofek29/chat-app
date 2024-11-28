@@ -1,12 +1,12 @@
-import { getRecipientUser } from "../../hooks/getRecipient";
-import { UserChat } from "../../types/chat.types"
+import { GetRecipientUser } from "../../hooks/getRecipient";
+import { Message, UserChat } from "../../types/chat.types"
 import { User } from "../../types/user.types"
 import avatar from '../../assets/avatar1.svg';
-import { useChat } from "../../context/ChatContext";
-import { getLastMessage } from "../../hooks/getLastMessage";
+import { useChat } from "../../context/ChatContext/useChat";
+import { GetLastMessage } from "../../hooks/getLastMessage";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-
+import { useEffect, useState } from "react";
 dayjs.extend(relativeTime);
 
 type UsersChatProps = {
@@ -15,12 +15,27 @@ type UsersChatProps = {
 };
 
 export const UsersChat: React.FC<UsersChatProps> = ({ chat, user }) => {
-    const { recipientUser } = getRecipientUser(chat, user);
-    const { onlineUsers } = useChat();
-    const { lastMessage } = getLastMessage(chat);
+    const { recipientUser } = GetRecipientUser(chat, user);
+    const { onlineUsers, updateLastMessage } = useChat();
+    const [lastMessage, setLastMessage] = useState<Message | null>(null);
 
+    // Update last message with db last message
+    const last = GetLastMessage(chat);
+    useEffect(() => {
+        setLastMessage(last);
+    }, [last]);
+
+    // Update last message with new message from socket
+    useEffect(() => {
+        if (updateLastMessage && updateLastMessage.chatId === chat._id) {
+            setLastMessage(updateLastMessage);
+        }
+    }, [updateLastMessage, chat]);
+
+    // update online status from socket
     const isOnline = onlineUsers?.some((user) => user?.userId === recipientUser?._id)
 
+    // get better timestamps for messages
     const getTime = () => {
         const timeDiff = dayjs(lastMessage?.createdAt).diff(new Date(Date.now()), 'days');
         if (timeDiff <= - 3) {

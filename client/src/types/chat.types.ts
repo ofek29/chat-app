@@ -13,3 +13,15 @@ export type Message = {
     senderId: string;
     updatedAt: string;
 }
+
+export type OnlineUsers = {
+    userId: string,
+    socketId: string,
+}
+
+export type ChatsError = {
+    error: boolean
+    response: Response,
+
+} | null;
+

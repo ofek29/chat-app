@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { useChat } from "../context/ChatContext";
+import { useChat } from "../context/ChatContext/useChat";
 import { baseUrl, getFromApi } from "../utils/services";
 import { Message, UserChat } from "../types/chat.types";
 
-export const getLastMessage = (chat: UserChat) => {
-    const { newMessage } = useChat();
+export const GetLastMessage = (chat: UserChat) => {
+    const { newMessage, messages } = useChat();
     const [lastMessage, setLastMessage] = useState<Message | null>(null);
 
     useEffect(() => {
@@ -17,7 +17,7 @@ export const getLastMessage = (chat: UserChat) => {
             setLastMessage(message);
         }
         getMessage();
-    }, [newMessage]);
+    }, [newMessage, messages, chat]);
 
-    return { lastMessage };
+    return lastMessage;
 };

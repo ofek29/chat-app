@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
-import { useChat } from "../../context/ChatContext"
+import { useChat } from "../../context/ChatContext/useChat";
 
 export const AllUsersChats = () => {
     const { allUsers, createChat } = useChat();
