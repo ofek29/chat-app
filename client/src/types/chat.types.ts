@@ -14,10 +14,12 @@ export type Message = {
     updatedAt: string;
 }
 
-export type OnlineUsers = {
-    userId: string,
-    socketId: string,
-}
+// export type OnlineUsers = {
+//     [key: string]: string[];
+//     // userId: string,
+//     // socketId: string,
+// }
+export type OnlineUsers = Map<string, string[]>
 
 export type ChatsError = {
     error: boolean

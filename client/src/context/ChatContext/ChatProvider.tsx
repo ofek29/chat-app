@@ -22,10 +22,12 @@ export const ChatProvider = ({ children, user }: Props) => {
     const [messagesError, setMessagesError] = useState<ChatsError | null>(null);
     const [allUsers, setAllUsers] = useState<User[]>([]);
     const [socket, setSocket] = useState<Socket | null>(null);
-    const [onlineUsers, setOnlineUsers] = useState<OnlineUsers[]>([]);
+    const [onlineUsers, setOnlineUsers] = useState<OnlineUsers | undefined>(undefined);
     // const [sendMessageError, setSendMessageError] = useState<ChatsError>(null);
     const [newMessage, setNewMessage] = useState<Message | null>(null);
     const [updateLastMessage, setUpdateLastMessage] = useState<Message | null>(null);
+
+    console.log(onlineUsers);
 
     // reset app when user logs out
     useEffect(() => {
@@ -52,7 +54,8 @@ export const ChatProvider = ({ children, user }: Props) => {
             socket.emit('addNewUser', user?._id);
         }
         socket.on('getOnlineUsers', (res) => {
-            setOnlineUsers(res);
+            const onlineMap: OnlineUsers = new Map(JSON.parse(res));
+            setOnlineUsers(onlineMap);
         })
         return () => {
             socket.off('getOnlineUsers');

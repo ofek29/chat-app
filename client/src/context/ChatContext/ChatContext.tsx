@@ -14,7 +14,7 @@ interface ChatContextType {
     createChat: (firstId: string | undefined, secondId: string | undefined) => void;
     allUsers: User[];
     sendTextMessage: (textMessage: string, sender: string | undefined, chatId: string | undefined, setTextMessage: React.Dispatch<React.SetStateAction<string>>) => void;
-    onlineUsers: OnlineUsers[];
+    onlineUsers: OnlineUsers | undefined;
     newMessage: Message | null;
     updateLastMessage: Message | null;
 };
