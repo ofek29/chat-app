@@ -9,6 +9,7 @@ interface ChatContextType {
     currentChat: UserChat | null;
     updateCurrentChat: (chat: UserChat) => void;
     messages: Message[] | null;
+    getMessages: () => void;
     isMessagesLoading: boolean;
     messagesError: ChatsError | null;
     createChat: (firstId: string | undefined, secondId: string | undefined) => void;
