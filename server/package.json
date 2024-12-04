@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "start:test": "NODE_ENV=test node app.js",
+    "start:test": "NODE_ENV=test nodemon app.js",
     "test": "jest"
   },
   "author": "ofek",
@@ -24,6 +24,7 @@
     "express": "^4.21.1",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.7.2",
+    "redis": "^4.7.0",
     "validator": "^13.12.0"
   }
 }

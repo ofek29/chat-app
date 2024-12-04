@@ -14,12 +14,12 @@ type Props = {
 export const ChatProvider = ({ children, user }: Props) => {
     const [userChats, setUserChats] = useState<UserChat[] | null>(null);
     const [newChat, setNewChat] = useState<UserChat | null>(null);
-    const [isUserChatsLoading, setIsUserChatsLoading] = useState(false);
+    const [isUserChatsLoading, setIsUserChatsLoading] = useState(true);
     const [userChatsError, setUserChatsError] = useState(null);
     const [currentChat, setCurrentChat] = useState<UserChat | null>(null);
     const [messages, setMessages] = useState<Message[] | null>(null);
-    const [hasMoreMessages, setHasMoreMessages] = useState(true);
-    const [isMessagesLoading, setIsMessagesLoading] = useState(false);
+    // const [hasMoreMessages, setHasMoreMessages] = useState(true);
+    const [isMessagesLoading, setIsMessagesLoading] = useState(true);
     const [messagesError, setMessagesError] = useState<ChatsError | null>(null);
     const [allUsers, setAllUsers] = useState<User[]>([]);
     const [socket, setSocket] = useState<Socket | null>(null);
@@ -33,6 +33,7 @@ export const ChatProvider = ({ children, user }: Props) => {
         if (!user) {
             setUserChats(null);
             setCurrentChat(null);
+            setMessages(null);
         }
     }, [user]);
 
@@ -131,20 +132,21 @@ export const ChatProvider = ({ children, user }: Props) => {
     useEffect(() => {
         const getMessages = async () => {
             if (user?._id) {
+                if (!currentChat) return;
                 setIsMessagesLoading(true);
                 setMessagesError(null);
-
                 const response = await getFromApi(`${baseUrl}/messages/${currentChat?._id}`);
-                setIsMessagesLoading(false);
+
                 if (response.error) {
                     console.log('error loading Messages', response.error);
                     return setMessagesError(response);
                 }
                 setMessages(response);
+                setIsMessagesLoading(false);
             }
         }
         getMessages();
-    }, [currentChat, user]);
+    }, [currentChat, user?._id]);
 
     // // get all messages for current chat
     // useEffect(() => {
@@ -177,7 +179,6 @@ export const ChatProvider = ({ children, user }: Props) => {
 
     //     }
     // }
-
 
     // all users. potential chats
     useEffect(() => {
@@ -257,7 +258,6 @@ export const ChatProvider = ({ children, user }: Props) => {
                 currentChat,
                 updateCurrentChat,
                 messages,
-                getMessages,
                 isMessagesLoading,
                 messagesError,
                 createChat,

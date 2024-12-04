@@ -4,6 +4,7 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 require('dotenv').config();
 
+const redisClient = require('./config/redisClient');
 const userRoutes = require('./Routes/userRoutes');
 const chatRoutes = require('./Routes/chatRoutes');
 const messageRoutes = require('./Routes/messageRoutes');
@@ -36,7 +37,6 @@ const connectToDatabase = async () => {
     } else {
         mongoUri = process.env.MONGOOSE_URI;
     }
-
     try {
         await mongoose.connect(mongoUri);
         console.log("mongoose connected");
@@ -63,6 +63,12 @@ const shutdownServer = async () => {
     console.log("Shutting down...");
     try {
         await closeDatabase(); // Close Mongoose connection
+        try {
+            await redisClient.quit(); // Close redis connection
+            console.log('Redis connection closed');
+        } catch (err) {
+            console.error('Error closing Redis connection:', err.message);
+        }
         server.close(() => {
             console.log("Server stopped.");
             process.exit(0);

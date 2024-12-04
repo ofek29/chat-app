@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useAuth } from "../../context/AuthContext/useAuth"
 import { useChat } from "../../context/ChatContext/useChat";
 import { GetRecipientUser } from "../../hooks/getRecipient";
@@ -17,11 +17,22 @@ export const ChatBox = () => {
 
     //auto scroll to bottom of chat 
     const chatBoxRef = useRef<HTMLDivElement | null>(null);
-    useEffect(() => {
+    const setChatBoxRef = (element: HTMLDivElement | null) => {
+        chatBoxRef.current = element;
         if (chatBoxRef.current) {
-            chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+            chatBoxRef.current.scrollTo(0, chatBoxRef.current.scrollHeight);
         }
-    }, [messages]);
+    };
+    // useLayoutEffect(() => {
+    //     console.log('ref', chatBoxRef.current);
+    //     console.log('Messages:', messages);
+
+
+    //     if (chatBoxRef.current && !isMessagesLoading) {
+    //         chatBoxRef.current.scrollTo(0, chatBoxRef.current.scrollHeight);
+    //     }
+    // }, [isMessagesLoading, messages]);
+
 
     if (!recipientUser || !currentChat) return (
         <p className="w-[50%] text-center relative top-[50%] text-xl">
@@ -59,9 +70,8 @@ export const ChatBox = () => {
             <div className="text-2xl font-semibold shadow-lg text-center rounded-t-md  h-10">
                 {recipientUser?.name}
             </div>
-
             <div className="h-[calc(100%-7rem)] overflow-scroll scroll-smooth flex flex-col" //add this to users list?
-                ref={chatBoxRef}>
+                ref={setChatBoxRef}>
                 {messages && messages.map((message, index) =>
                     <div key={index}
                         className={`my-1 mx-2 px-2 py-2 text-center
@@ -88,7 +98,6 @@ export const ChatBox = () => {
                     send
                 </button>
             </div>
-
         </div >
     </>
     )
