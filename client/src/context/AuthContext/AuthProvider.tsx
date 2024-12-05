@@ -13,15 +13,6 @@ export const AuthProvider = ({ children }: Props) => {
     const [isRegisterLoading, setIsRegisterLoading] = useState<boolean>(false);
     const [loginError, setLoginError] = useState<UserError>(null);
     const [isLoginLoading, setIsLoginLoading] = useState<boolean>(false);
-    const [registerInfo, setRegisterInfo] = useState<RegisterInfo>({
-        name: '',
-        email: '',
-        password: '',
-    });
-    const [loginInfo, setLoginInfo] = useState<LoginInfo>({
-        email: '',
-        password: '',
-    });
 
     useEffect(() => {
         const user = localStorage.getItem('user');
@@ -31,20 +22,9 @@ export const AuthProvider = ({ children }: Props) => {
         }
     }, []);
 
-    const updateRegisterInfo = useCallback((name: string, value: string) => {
-        setRegisterInfo((prev) => ({
-            ...prev, [name]: value
-        }));
-    }, []);
+    const registerUser = useCallback(async (registerInfo: RegisterInfo) => {
+        console.log(registerInfo);
 
-    const updateLoginInfo = useCallback((name: string, value: string) => {
-        setLoginInfo((prev) => ({
-            ...prev, [name]: value
-        }));
-    }, []);
-
-    const registerUser = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
         setIsRegisterLoading(true);
         setRegisterError(null);
 
@@ -56,10 +36,9 @@ export const AuthProvider = ({ children }: Props) => {
         }
         localStorage.setItem('user', JSON.stringify(response));
         setUser(response);
-    }, [registerInfo]);
+    }, []);
 
-    const loginUser = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+    const loginUser = useCallback(async (loginInfo: LoginInfo) => {
 
         setIsLoginLoading(true);
         setLoginError(null);
@@ -72,7 +51,7 @@ export const AuthProvider = ({ children }: Props) => {
         }
         localStorage.setItem('user', JSON.stringify(response));
         setUser(response);
-    }, [loginInfo]);
+    }, []);
 
     const logoutUser = useCallback(() => {
         localStorage.removeItem('user');
@@ -83,16 +62,12 @@ export const AuthProvider = ({ children }: Props) => {
         <AuthContext.Provider
             value={{
                 user,
-                registerInfo,
                 registerError,
                 isRegisterLoading,
-                updateRegisterInfo,
                 registerUser,
                 logoutUser,
-                loginInfo,
                 loginError,
                 isLoginLoading,
-                updateLoginInfo,
                 loginUser,
             }}
         >

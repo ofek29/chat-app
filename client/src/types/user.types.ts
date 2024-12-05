@@ -9,7 +9,7 @@ export type RegisterInfo = {
     name: string,
     email: string,
     password: string
-};
+} | null;
 
 export type LoginInfo = {
     email: string,
