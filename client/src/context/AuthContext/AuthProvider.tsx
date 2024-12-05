@@ -15,22 +15,18 @@ export const AuthProvider = ({ children }: Props) => {
     const [isLoginLoading, setIsLoginLoading] = useState<boolean>(false);
 
     useEffect(() => {
-        const user = localStorage.getItem('user');
-
-        if (user) {
-            setUser(JSON.parse(user));
+        const NewUser = localStorage.getItem('user');
+        if (NewUser) {
+            setUser(JSON.parse(NewUser));
         }
     }, []);
 
     const registerUser = useCallback(async (registerInfo: RegisterInfo) => {
-        console.log(registerInfo);
-
         setIsRegisterLoading(true);
         setRegisterError(null);
 
         const response = await fetchFromApi(`${baseUrl}/users/register`, JSON.stringify(registerInfo));
         setIsRegisterLoading(false);
-
         if (response.error) {
             return setRegisterError(response)
         }
@@ -39,13 +35,11 @@ export const AuthProvider = ({ children }: Props) => {
     }, []);
 
     const loginUser = useCallback(async (loginInfo: LoginInfo) => {
-
         setIsLoginLoading(true);
         setLoginError(null);
 
         const response = await fetchFromApi(`${baseUrl}/users/login`, JSON.stringify(loginInfo));
         setIsLoginLoading(false);
-
         if (response.error) {
             return setLoginError(response)
         }
