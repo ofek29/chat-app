@@ -30,15 +30,11 @@ module.exports.createMessage = createMessage;
 
 const getMessages = async (req, res) => {
     const { chatId } = req.params;
-    const { limit = 0, offset = 0, sortOrder = 1 } = req.query; // Default: no limit, start at 0
-    console.log('limit ', limit, 'offset', offset, 'sortOrder', sortOrder);
+    const { limit = 0, offset = 0, sortOrder = 1 } = req.query; // Default: no limit, start at 0, sort to get last message
 
     let cachedMessages = null;
-
     try {
-        cachedMessages = await getMessagesFromRedis(chatId, limit, offset);
-        console.log('cachedMessages', cachedMessages);
-
+        cachedMessages = await getMessagesFromRedis(chatId, limit, offset, Number(sortOrder));
     } catch (redisError) {
         console.error('Redis get error:', redisError.message);
     }
@@ -46,6 +42,7 @@ const getMessages = async (req, res) => {
         console.log('Messages fetched from redis', cachedMessages);
         return res.status(200).json(cachedMessages);
     }
+
     try {
         console.log('Fetching messages from MongoDB');
         // const messages = await messageModel.find({ chatId });
@@ -75,8 +72,6 @@ const saveMessagesToRedisAsList = async (chatId, messages) => {
     try {
         if (messages.length > 0) {
             const messagesAsStrings = messages.map((message) => JSON.stringify(message));
-            console.log(messagesAsStrings);
-
             await redisClient.rPush(chatId, messagesAsStrings);
             await redisClient.expire(chatId, CACHE_TIME);
             console.log(`Saved ${messages.length} messages to Redis for chatId: ${chatId}`);
@@ -86,11 +81,14 @@ const saveMessagesToRedisAsList = async (chatId, messages) => {
     }
 };
 
-const getMessagesFromRedis = async (chatId, limit, offset) => {
+const getMessagesFromRedis = async (chatId, limit, offset, sortOrder) => {
     try {
+        if (sortOrder === -1) {
+            const message = await redisClient.lRange(chatId, -1, -1); // get last message
+            return message.map((msg) => JSON.parse(msg));
+        }
         // Fetch messages in the specified range (default: all messages)
         const messages = await redisClient.lRange(chatId, offset, offset + limit - 1);
-        console.log('get from redis', messages);
         return messages.map((msg) => JSON.parse(msg));
     } catch (error) {
         console.error('Error fetching messages from Redis list:', error.message);

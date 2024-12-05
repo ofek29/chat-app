@@ -14,8 +14,6 @@ const redisClient = createClient({ // timeout
         },
     },
 });
-console.log('Redis client', redisClient);
-
 
 redisClient.on('connect', () => {
     console.log('Redis Client Connected');
