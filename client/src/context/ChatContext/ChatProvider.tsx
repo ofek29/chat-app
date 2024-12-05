@@ -86,17 +86,19 @@ export const ChatProvider = ({ children, user }: Props) => {
         };
     }, [socket, currentChat]);
 
-    // send with socket user chats when new chat opened
+    // socket send user chats when new chat opened
     useEffect(() => {
         if (socket === null) return;
         const recipientId = newChat?.members.find((id) => id !== user?._id);
         socket.emit('sendNewUserChat', newChat, recipientId);
     }, [newChat, socket, user?._id]);
 
-    // get from socket and update user chats when new open chat opened
+    // socket get and update user chats when new open chat opened
     useEffect(() => {
         if (socket === null) return;
         socket.on('getNewUserChat', (newChat) => {
+            const isChatExist = userChats?.find((chat) => chat._id === newChat._id);
+            if (isChatExist) { return; }
             setUserChats((prev) => {
                 if (prev === null) {
                     return null;
