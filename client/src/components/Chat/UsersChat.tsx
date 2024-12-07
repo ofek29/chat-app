@@ -35,7 +35,7 @@ export const UsersChat: React.FC<UsersChatProps> = ({ chat, user }) => {
     // update online status from socket
     let isOnline;
     if (recipientUser) {
-        isOnline = onlineUsers?.has(recipientUser?._id);
+        isOnline = onlineUsers?.has(recipientUser._id);
     }
 
     // get better timestamps for messages

@@ -5,7 +5,6 @@ import { ChatsError, Message, OnlineUsers, UserChat } from "../../types/chat.typ
 import { io, Socket } from "socket.io-client";
 import { ChatContext } from "./ChatContext";
 
-
 type Props = {
     children: React.ReactNode,
     user: User
