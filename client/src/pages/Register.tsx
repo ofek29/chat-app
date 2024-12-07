@@ -20,7 +20,7 @@ export const Register = () => {
 
     return (
         <div className="bg-[#0c1821] h-[calc(100vh-4rem)] flex justify-center items-center">
-            <div className="w-[35%] h-[50%] min-w-[400px] bg-[#1b2a41] text-white rounded-2xl border-gray-500 border-[0.5px] justify-center flex">
+            <div className=" w-[25%] h-[50%] min-w-[400px] min-h-[300px] bg-[#1b2a41] text-white rounded-2xl border-gray-500 border-[0.5px] justify-center flex">
                 <form ref={formRef} onSubmit={handleSubmit}
                     className="w-2/3  gap-8 flex flex-col justify-center al ">
                     <h1 className=" text-xl text-center">Sign Up</h1>
@@ -47,11 +47,10 @@ export const Register = () => {
                     </button>
 
                     {registerError?.error &&
-                        <div className="text-red-500">
-                            <p>{registerError?.message}</p>
-                        </div>}
+                        <p className="text-red-500">{registerError?.message}</p>
+                    }
                 </form>
-            </div >
-        </div >
+            </div>
+        </div>
     )
 }
