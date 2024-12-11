@@ -10,14 +10,14 @@ It showcases modern web development practices, efficient data management, and pe
 3. **Chat Management**:
    - Displays active chats with the most recent messages.
    - Lazy loading for chat history.
-4. **Online Status**: Tracks user sessions efficiently with Redis.
-5. **Frontend**:
+   - Reloading chats efficiently with Redis.
+4. **Frontend**:
    - Built with React and styled using Tailwind CSS.
    - Component-based architecture with reusable custom hooks.
-6. **Testing**:
+5. **Testing**:
    - End-to-end testing with Playwright.
    - Server-side testing using Jest and Supertest.
-7. **CI/CD**: Automated workflows with GitHub Actions.
+6. **CI/CD**: Automated workflows with GitHub Actions.
 
 ## Tech Stack
 ### Core Stack
