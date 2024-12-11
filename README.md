@@ -1,46 +1,74 @@
-# Chat App
+# Chat Application
 
 ## Overview
+This project is a **real-time chat application** built using the MERN (MongoDB, Express, React, Node.js) stack, enhanced with additional technologies like Redis for caching and Socket.IO for WebSocket communication. 
+It showcases modern web development practices, efficient data management, and performance optimization techniques.
 
-The **Chat App** is a real-time messaging platform that allows users to communicate in different chat rooms, send private messages, and more. Built using Node.js and Express on the backend, React for the frontend, and WebSockets powered by Socket.IO for real-time communication. The app uses **Vite** for fast bundling and **Tailwind CSS** for a modern and responsive design.
-
-## Features
-
-- 🔥 **Real-time Messaging**: Powered by WebSocket technology (Socket.IO).
-- 💬 **Multiple Chat Rooms**: Join or create rooms for group conversations.
-- 🧑‍🤝‍🧑 **Direct Messaging**: Private 1-on-1 chat feature.
-- 🖥️ **Responsive Design**: Tailwind CSS ensures the app works seamlessly across devices.
-- ⚡ **Fast Development with Vite**: Lightning-fast builds and HMR (Hot Module Replacement) for an
-  improved developer experience.
+## Key Features
+1. **Real-Time Messaging**: Instant message exchange using WebSocket with Socket.IO.
+2. **Authentication**: Secure user login and registration with JWT and bcrypt.
+3. **Chat Management**:
+   - Displays active chats with the most recent messages.
+   - Lazy loading for chat history.
+4. **Online Status**: Tracks user sessions efficiently with Redis.
+5. **Frontend**:
+   - Built with React and styled using Tailwind CSS.
+   - Component-based architecture with reusable custom hooks.
+6. **Testing**:
+   - End-to-end testing with Playwright.
+   - Server-side testing using Jest and Supertest.
+7. **CI/CD**: Automated workflows with GitHub Actions.
 
 ## Tech Stack
+### Core Stack
+- **MongoDB**: NoSQL database for storing chat messages and user data.
+- **Express**: Node.js framework for building APIs.
+- **React**: Frontend library for building the user interface.
+- **Node.js**: Backend runtime for server-side logic.
 
-### Backend
-- **Node.js**: JavaScript runtime for the backend.
-- **Express.js**: Web framework for Node.js.
-- **MongoDB**: NoSQL database for storing user information and chat data.
+### Additional Tools
+- **Redis**: Used for caching online users and optimizing session management.
+- **Socket.IO**: WebSocket library for real-time communication.
+- **Tailwind CSS**: Utility-first CSS framework for styling.
+- **Vite**: Fast build tool for frontend development.
 
-- **Socket.IO**: Enables real-time, bidirectional communication between the client and server.
+### Testing
+- **Playwright**: End-to-end testing for the frontend.
+- **Jest + Supertest**: Testing server-side routes and APIs.
 
-### Frontend
-- **React.js**: JavaScript library for building dynamic user interfaces.
-- **Vite**: Fast and modern build tool for a smooth development experience.
-- **Tailwind CSS**: Utility-first CSS framework for rapid UI development.
-- **Socket.IO Client**: For connecting to the WebSocket server from the frontend.
+### Deployment
+- **GitHub Actions**: Automated CI/CD pipeline for testing and deployment.
 
 ## Folder Structure
-
 ```
 chat-app/
-├── client/               # React frontend with Vite
-│   ├── public/           # Public assets (HTML, icons, etc.)
-│   └── src/              # React source code
-│       └── ...           # Frontend files 
-├── server/               # Express backend 
-│   ├── app.js            # Entry point for the backend 
-│   └── ...               # Other backend files 
-├── package.json          # Node.js dependencies and scripts 
-└── README.md             # Project documentation 
+├── server/         # Backend API
+├── socket/         # Socket.IO server
+└── client/         # React frontend
 ```
 
-## Installation
+## Installation and Setup
+1. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/ofek29/chat-app.git
+   cd chat-app
+   ```
+2. **Install Dependencies**:
+   ```bash
+   cd server
+   npm install
+  
+   cd socket
+   npm install
+ 
+   cd client
+   npm install
+   ```
+3. **Start the Application**:
+   ```bash
+   cd client
+   npm start
+   ```
+
+The chat-app should now be accessible at http://localhost:5173.
+   
