@@ -2,7 +2,6 @@ import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-
 import { closeRedisClient } from './config/redisClient.js';
 import userRoutes from './Routes/userRoutes.js';
 import chatRoutes from './Routes/chatRoutes.js';
@@ -33,7 +32,7 @@ const connectToDatabase = async () => {
     let mongoUri;
     if (process.env.NODE_ENV === 'test') {
         console.log('local mongodb');
-        const { MongoMemoryServer } = require('mongodb-memory-server');
+        const { MongoMemoryServer } = await import("mongodb-memory-server");
         mongoServer = await MongoMemoryServer.create();
         mongoUri = mongoServer.getUri();
     } else {
