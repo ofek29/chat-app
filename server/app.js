@@ -1,14 +1,16 @@
-const express = require('express');
+import express from 'express';
+import cors from 'cors';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+
+import { closeRedisClient } from './config/redisClient.js';
+import userRoutes from './Routes/userRoutes.js';
+import chatRoutes from './Routes/chatRoutes.js';
+import messageRoutes from './Routes/messageRoutes.js';
+
+dotenv.config();
+
 const app = express();
-const cors = require('cors');
-const mongoose = require('mongoose');
-require('dotenv').config();
-
-const redisClient = require('./config/redisClient');
-const userRoutes = require('./Routes/userRoutes');
-const chatRoutes = require('./Routes/chatRoutes');
-const messageRoutes = require('./Routes/messageRoutes');
-
 app.use(express.json());
 app.use(cors())
 
@@ -60,21 +62,18 @@ const closeDatabase = async () => {
 };
 
 const shutdownServer = async () => {
-    console.log("Shutting down...");
+    console.log("\nShutting down...");
     try {
         await closeDatabase(); // Close Mongoose connection
-        try {
-            await redisClient.quit(); // Close redis connection
-            console.log('Redis connection closed');
-        } catch (err) {
-            console.error('Error closing Redis connection:', err.message);
-        }
+        await closeRedisClient(); // Close redis connection
+
         server.close(() => {
             console.log("Server stopped.");
             process.exit(0);
         });
     } catch (error) {
-        console.log('Failed to close server', error);
+        console.error('Failed to close server', error);
+        process.exit(1);
     }
 };
 

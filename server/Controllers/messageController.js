@@ -1,9 +1,12 @@
-const messageModel = require('../Models/messageModel');
-const redisClient = require('../config/redisClient');
+import messageModel from '../Models/messageModel.js';
+import { createSimpleValkeyGlideClient } from '../config/redisClient.js';
 
 const CACHE_TIME = 60 * 10; // 10 MIN
 
-const createMessage = async (req, res) => {
+const redisClient = await createSimpleValkeyGlideClient();
+
+
+export const createMessage = async (req, res) => {
     const { chatId, senderId, content } = req.body;
     //todo check params 
     try {
@@ -15,7 +18,9 @@ const createMessage = async (req, res) => {
         const response = await message.save();
 
         try {
-            await pushMessageToRedis(chatId, message)
+            if (redisClient) {
+                await pushMessageToRedis(chatId, message);
+            }
         } catch (redisError) {
             console.error('Redis set error:', redisError.message);
         }
@@ -25,16 +30,18 @@ const createMessage = async (req, res) => {
         res.status(500).json(error)
     }
 };
-module.exports.createMessage = createMessage;
 
 
-const getMessages = async (req, res) => {
+export const getMessages = async (req, res) => {
     const { chatId } = req.params;
     const { limit = 0, offset = 0, sortOrder = 1 } = req.query; // Default: no limit, start at 0, sort to get last message
 
     let cachedMessages = null;
     try {
-        cachedMessages = await getMessagesFromRedis(chatId, limit, offset, Number(sortOrder));
+        if (redisClient) {
+            cachedMessages = await getMessagesFromRedis(chatId, limit, offset, Number(sortOrder));
+
+        }
     } catch (redisError) {
         console.error('Redis get error:', redisError.message);
     }
@@ -45,7 +52,6 @@ const getMessages = async (req, res) => {
 
     try {
         console.log('Fetching messages from MongoDB');
-        // const messages = await messageModel.find({ chatId });
         const messages = await messageModel
             .find({ chatId })
             .sort({ createdAt: Number(sortOrder) })
@@ -65,15 +71,14 @@ const getMessages = async (req, res) => {
         return res.status(500).json(DbError);
     }
 };
-module.exports.getMessages = getMessages;
 
 
 const saveMessagesToRedisAsList = async (chatId, messages) => {
     try {
         if (messages.length > 0) {
             const messagesAsStrings = messages.map((message) => JSON.stringify(message));
-            await redisClient.rPush(chatId, messagesAsStrings);
-            await redisClient.expire(chatId, CACHE_TIME);
+            await redisClient.customCommand(["RPUSH", chatId, ...messagesAsStrings], { route: "randomNode" });
+            await redisClient.customCommand(["EXPIRE", chatId, CACHE_TIME], { route: "randomNode" });
             console.log(`Saved ${messages.length} messages to Redis for chatId: ${chatId}`);
         }
     } catch (error) {
@@ -83,12 +88,13 @@ const saveMessagesToRedisAsList = async (chatId, messages) => {
 
 const getMessagesFromRedis = async (chatId, limit, offset, sortOrder) => {
     try {
+        let messages;
         if (sortOrder === -1) {
-            const message = await redisClient.lRange(chatId, -1, -1); // get last message
-            return message.map((msg) => JSON.parse(msg));
+            messages = await redisClient.customCommand(["LRANGE", chatId, "-1", "-1"], { route: "randomNode" });
+        } else {
+            // Fetch messages in the specified range (default: all messages)
+            messages = await redisClient.customCommand(["LRANGE", chatId, offset.toString(), (offset + limit - 1).toString()], { route: "randomNode" });
         }
-        // Fetch messages in the specified range (default: all messages)
-        const messages = await redisClient.lRange(chatId, offset, offset + limit - 1);
         return messages.map((msg) => JSON.parse(msg));
     } catch (error) {
         console.error('Error fetching messages from Redis list:', error.message);
@@ -99,27 +105,11 @@ const getMessagesFromRedis = async (chatId, limit, offset, sortOrder) => {
 const pushMessageToRedis = async (chatId, message) => {
     try {
         if (!message) return;
-        await redisClient.rPush(chatId, JSON.stringify(message));
-        await redisClient.expire(chatId, CACHE_TIME);
+        await redisClient.customCommand(["RPUSH", chatId, JSON.stringify(message)], { route: "randomNode" });
+        await redisClient.customCommand(["EXPIRE", chatId, CACHE_TIME.toString()], { route: "randomNode" });
         console.log('Message pushed to Redis list for chatId:', chatId);
     } catch (error) {
         console.error('Error pushing message to Redis list:', error.message);
     }
 };
 
-
-
-
-// const getMessages = async (req, res) => {
-//     const { chatId } = req.params;
-//     try {
-//         const messages = await messageModel.find({ chatId });
-
-//         res.status(200).json(messages);
-
-//     } catch (error) {
-//         console.log(error);
-//         res.status(500).json(error);
-//     }
-// };
-// module.exports.getMessages = getMessages;

@@ -1,6 +1,6 @@
-const chatModel = require('../Models/chatModel');
+import chatModel from '../Models/chatModel.js';
 
-const createChat = async (req, res) => {
+export const createChat = async (req, res) => {
     const { firstId, secondId } = req.body;
     // check if we already have this users
     try {
@@ -24,9 +24,8 @@ const createChat = async (req, res) => {
         // res.status(500).json({ error: error })
     }
 };
-module.exports.createChat = createChat;
 
-const findUserChats = async (req, res) => {
+export const findUserChats = async (req, res) => {
     const userId = req.params.userId;
 
     try {
@@ -40,9 +39,8 @@ const findUserChats = async (req, res) => {
         res.status(500).json(error);
     }
 };
-module.exports.findUserChats = findUserChats;
 
-const getChat = async (req, res) => {
+export const getChat = async (req, res) => {
     const { firstId, secondId } = req.params;
     try {
         const chat = await chatModel.findOne({
@@ -54,4 +52,3 @@ const getChat = async (req, res) => {
         res.status(500).json(error);
     }
 };
-module.exports.getChat = getChat;
