@@ -1,35 +1,43 @@
-const { createClient } = require("redis");
+import { GlideClient } from "@valkey/valkey-glide";
 
-// Create a Redis client
-const redisClient = createClient({ // timeout
-    url: process.env.REDIS_URL || 'redis://localhost:6379',
-    socket: {
-        reconnectStrategy: (retries) => {
-            console.error(`Redis connection failed. Retry attempt: ${retries}`);
-            if (retries >= 5) {
-                console.error('Maximum retry attempts reached. Stopping Redis retries.');
-                return new Error('Redis connection failed after maximum retries');
-            }
-            return Math.min(retries * 100, 3000); // Retry with exponential backoff
-        },
-    },
-});
+let client = null;
 
-redisClient.on('connect', () => {
-    console.log('Redis Client Connected');
-});
+export async function createSimpleValkeyGlideClient() {
+    const addresses = [{
+        host: "localhost",
+        port: 6379
+    }];
 
-redisClient.on('error', (err) => {
-    console.error('Redis connection error:', err);
-});
-
-// Connect to Redis
-(async () => {
     try {
-        await redisClient.connect();
-    } catch (err) {
-        console.error('Error connecting to Redis:', err);
+        client = await GlideClient.createClient({
+            addresses,
+            clientName: "redisClient",
+            connectionBackoff: {
+                numberOfRetries: 3,
+                factor: 200,
+                exponentBase: 2,
+            }
+        });
+        // const pong = await client.customCommand(["PING"], { route: "randomNode" });
+        // console.log(`${pong}: Redis Client Connected`);
+        return client;
+    } catch (error) {
+        console.error('Error connecting to Redis:', error);
+        return null;
     }
-})();
+}
 
-module.exports = redisClient;
+createSimpleValkeyGlideClient();
+
+export async function closeRedisClient() {
+    if (client) {
+        try {
+            await client.close();
+            console.log('Redis connection closed');
+        } catch (error) {
+            console.error('Error closing Redis:', error);
+        }
+    }
+}
+
+export default client;
