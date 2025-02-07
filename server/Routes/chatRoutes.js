@@ -1,10 +1,10 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
 
-const chatController = require('../Controllers/chatController');
+import { createChat, findUserChats, getChat } from '../Controllers/chatController.js';
 
-router.post('/', chatController.createChat);
-router.get('/:userId', chatController.findUserChats);
-router.get('/find/:firstId/:secondId', chatController.getChat);
+router.post('/', createChat);
+router.get('/:userId', findUserChats);
+router.get('/find/:firstId/:secondId', getChat);
 
-module.exports = router;
+export default router;

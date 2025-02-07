@@ -1,10 +1,10 @@
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const validator = require('validator');
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import validator from 'validator';
 
-const userModel = require('../Models/userModel');
-const messageModel = require('../Models/messageModel');
-const chatModel = require('../Models/chatModel');
+import userModel from '../Models/userModel.js';
+import messageModel from '../Models/messageModel.js';
+import chatModel from '../Models/chatModel.js';
 
 //crate token for user authentication
 const createToken = (_id) => {
@@ -13,7 +13,7 @@ const createToken = (_id) => {
 }
 
 //register user and save to db
-const registerUser = async (req, res) => {
+export const registerUser = async (req, res) => {
     try {
         const { name, email, password } = req.body;
 
@@ -48,10 +48,9 @@ const registerUser = async (req, res) => {
         res.status(500).send(err);
     }
 };
-module.exports.registerUser = registerUser;
 
 //login user
-const loginUser = async (req, res) => {
+export const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
 
@@ -77,10 +76,9 @@ const loginUser = async (req, res) => {
         res.status(500).send(err);
     }
 };
-module.exports.loginUser = loginUser;
 
 //get user by id
-const findUser = async (req, res) => {
+export const findUser = async (req, res) => {
     try {
         const userId = req.params.userId;
 
@@ -95,9 +93,8 @@ const findUser = async (req, res) => {
         res.status(500).send(err);
     }
 };
-module.exports.findUser = findUser;
 
-const getAllUsers = async (req, res) => {
+export const getAllUsers = async (req, res) => {
     try {
         const users = await userModel.find();
         res.status(200).json(users);
@@ -106,10 +103,9 @@ const getAllUsers = async (req, res) => {
         res.status(500).send(err);
     }
 };
-module.exports.getAllUsers = getAllUsers;
 
 //delete user and his messages from the database
-const deleteUser = async (req, res) => {
+export const deleteUser = async (req, res) => {
     try {
         const userId = req.params.userId;
 
@@ -133,4 +129,3 @@ const deleteUser = async (req, res) => {
         res.status(500).send(err);
     }
 };
-module.exports.deleteUser = deleteUser;
