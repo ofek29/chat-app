@@ -4,6 +4,7 @@ Thumbs.db
 
 #Server 
 server/node_modules/
+server/glide-logs/
 server/.env
 
 # React (Frontend)
