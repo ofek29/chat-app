@@ -2,24 +2,26 @@ import { GlideClient } from "@valkey/valkey-glide";
 
 let client = null;
 
-export async function createSimpleValkeyGlideClient() {
+/**
+ * Create a Redis client if it doesn't exist.
+ * @returns {Promise<GlideClient>}
+ */
+export async function getOrCreateRedisClient() {
+    if (client) return client;
     const addresses = [{
         host: "localhost",
         port: 6379
     }];
-
     try {
         client = await GlideClient.createClient({
-            addresses,
+            addresses: addresses,
             clientName: "redisClient",
+            requestTimeout: 500,
             connectionBackoff: {
-                numberOfRetries: 3,
-                factor: 200,
-                exponentBase: 2,
-            }
+                numberOfRetries: 2,
+            },
         });
-        // const pong = await client.customCommand(["PING"], { route: "randomNode" });
-        // console.log(`${pong}: Redis Client Connected`);
+        console.log('Connected to Redis');
         return client;
     } catch (error) {
         console.error('Error connecting to Redis:', error);
@@ -27,17 +29,14 @@ export async function createSimpleValkeyGlideClient() {
     }
 }
 
-createSimpleValkeyGlideClient();
 
-export async function closeRedisClient() {
+export function closeRedisClient() {
     if (client) {
         try {
-            await client.close();
+            client.close();
             console.log('Redis connection closed');
         } catch (error) {
             console.error('Error closing Redis:', error);
         }
     }
 }
-
-export default client;

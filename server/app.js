@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import { closeRedisClient } from './config/redisClient.js';
+import { getOrCreateRedisClient, closeRedisClient } from './config/redisClient.js';
 import userRoutes from './Routes/userRoutes.js';
 import chatRoutes from './Routes/chatRoutes.js';
 import messageRoutes from './Routes/messageRoutes.js';
@@ -24,7 +24,10 @@ app.use('/api/messages', messageRoutes);
 const port = process.env.PORT || 3000;
 const server = app.listen(port, () => {
     console.log(`Server listening on port ${port}`)
+    connectToDatabase();
+    getOrCreateRedisClient();
 });
+
 
 // Connect to MongoDB
 let mongoServer;
@@ -46,7 +49,6 @@ const connectToDatabase = async () => {
     }
 };
 
-connectToDatabase();
 
 const closeDatabase = async () => {
     try {
@@ -64,7 +66,7 @@ const shutdownServer = async () => {
     console.log("\nShutting down...");
     try {
         await closeDatabase(); // Close Mongoose connection
-        await closeRedisClient(); // Close redis connection
+        closeRedisClient(); // Close redis connection
 
         server.close(() => {
             console.log("Server stopped.");
