@@ -4,6 +4,7 @@ const CACHE_TIME = 60 * 10; // 10 MIN
 
 const redisClient = await getOrCreateRedisClient();
 
+// Create and save a new message to the database and Redis
 export const createMessage = async (req, res) => {
     const { chatId, senderId, content } = req.body;
     try {
@@ -21,6 +22,7 @@ export const createMessage = async (req, res) => {
         } catch (redisError) {
             console.error('Redis set error:', redisError.message);
         }
+
         res.status(200).json(response);
     } catch (error) {
         console.log('Error creating message')
@@ -28,53 +30,62 @@ export const createMessage = async (req, res) => {
     }
 };
 
-
+// Retrieve and return all messages from the database or Redis if available
 export const getMessages = async (req, res) => {
     const { chatId } = req.params;
-    const { limit = 0, offset = 0, sortOrder = 1 } = req.query; // Default: no limit, start at 0, sort to get last message
+    const { getLastMessage = false } = req.query;
 
-    let cachedMessages = null;
     try {
-        if (redisClient) {
-            cachedMessages = await getMessagesFromRedis(chatId, limit, offset, Number(sortOrder));
+        if (redisClient && !getLastMessage) {
+            const cachedMessages = await getMessagesFromRedis(chatId);
+            if (cachedMessages && cachedMessages.length > 0) {
+                console.log('Messages fetched from redis');
+                return res.status(200).json(cachedMessages);
+            }
         }
     } catch (redisError) {
         console.error('Redis get error:', redisError.message);
     }
-    if (cachedMessages && cachedMessages.length > 0) {
-        console.log('Messages fetched from redis', cachedMessages);
-        return res.status(200).json(cachedMessages);
-    }
 
     try {
-        console.log('Fetching messages from MongoDB');
-        const messages = await messageModel
-            .find({ chatId })
-            .sort({ createdAt: Number(sortOrder) })
-            .skip(Number(offset))
-            .limit(Number(limit));
+        let messages;
+        if (getLastMessage) {
+            messages = await messageModel
+                .find({ chatId })
+                .sort({ createdAt: -1 })
+                .limit(1);
+        } else {
+            console.log('Fetching messages from MongoDB');
+            messages = await messageModel
+                .find({ chatId })
+                .sort({ createdAt: 1 });
+        }
 
         try {
-            if (messages.length > 0 && limit == 0 && redisClient) { // for now temp. if want a specific message don't save
-                await saveMessagesToRedisAsList(chatId, messages);
+            if (redisClient && !getLastMessage) {
+                await saveMessagesToRedis(chatId, messages);
             }
         } catch (redisError) {
             console.error('Redis set error:', redisError.message);
         }
+
         return res.status(200).json(messages);
-    } catch (DbError) {
-        console.error('DB error', DbError);
-        return res.status(500).json(DbError);
+
+    } catch (dbError) {
+        console.error('DB error', dbError);
+        return res.status(500).json(dbError);
     }
 };
 
 
-const saveMessagesToRedisAsList = async (chatId, messages) => {
+// Save messages that fetched from database to Redis
+async function saveMessagesToRedis(chatId, messages) {
     try {
         if (messages.length > 0) {
             const messagesAsStrings = messages.map((message) => JSON.stringify(message));
-            await redisClient.rpush(chatId, ...messagesAsStrings);
+            await redisClient.rpush(chatId, messagesAsStrings);
             await redisClient.expire(chatId, CACHE_TIME);
+
             console.log(`Saved ${messages.length} messages to Redis for chatId: ${chatId}`);
         }
     } catch (error) {
@@ -82,27 +93,21 @@ const saveMessagesToRedisAsList = async (chatId, messages) => {
     }
 };
 
-const getMessagesFromRedis = async (chatId, limit, offset, sortOrder) => {
+// Fetch messages from Redis
+async function getMessagesFromRedis(chatId) {
     try {
-        let messages;
-        if (sortOrder === -1) {
-            messages = await redisClient.lrange(chatId, -1, -1);
-        } else {
-            // Fetch messages in the specified range (default: all messages)
-            messages = await redisClient.lrange(chatId, offset, offset + limit - 1);
-        }
+        const messages = await redisClient.lrange(chatId, 0, -1);
         return messages.map((msg) => JSON.parse(msg));
     } catch (error) {
         console.error('Error fetching messages from Redis list:', error.message);
-        return null;
     }
 };
 
-const pushMessageToRedis = async (chatId, message) => {
+// Push received message to Redis
+async function pushMessageToRedis(chatId, message) {
     try {
         if (!message) return;
         await redisClient.rpush(chatId, JSON.stringify(message));
-        await redisClient.expire(chatId, CACHE_TIME);
         console.log('Message pushed to Redis list for chatId:', chatId);
     } catch (error) {
         console.error('Error pushing message to Redis list:', error.message);

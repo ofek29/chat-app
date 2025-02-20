@@ -15,7 +15,7 @@ export const ChatBox = () => {
     const { recipientUser } = GetRecipientUser(currentChat, user);
     const [textMessage, setTextMessage] = useState<string>('');
 
-    //auto scroll to bottom of chat 
+    //auto scroll to bottom of chat box
     const chatBoxRef = useRef<HTMLDivElement | null>(null);
     const setChatBoxRef = (element: HTMLDivElement | null) => {
         chatBoxRef.current = element;
@@ -23,16 +23,6 @@ export const ChatBox = () => {
             chatBoxRef.current.scrollTo(0, chatBoxRef.current.scrollHeight);
         }
     };
-    // useLayoutEffect(() => {
-    //     console.log('ref', chatBoxRef.current);
-    //     console.log('Messages:', messages);
-
-
-    //     if (chatBoxRef.current && !isMessagesLoading) {
-    //         chatBoxRef.current.scrollTo(0, chatBoxRef.current.scrollHeight);
-    //     }
-    // }, [isMessagesLoading, messages]);
-
 
     if (!recipientUser || !currentChat) return (
         <p className="w-[50%] text-center relative top-[50%] text-xl">
@@ -70,7 +60,7 @@ export const ChatBox = () => {
             <div className="text-2xl font-semibold shadow-lg text-center rounded-t-md  h-10">
                 {recipientUser?.name}
             </div>
-            <div className="h-[calc(100%-7rem)] overflow-scroll scroll-smooth flex flex-col" //add this to users list?
+            <div className="h-[calc(100%-7rem)] overflow-scroll scroll-smooth flex flex-col"
                 ref={setChatBoxRef}>
                 {messages && messages.map((message, index) =>
                     <div key={index}

@@ -2,7 +2,7 @@ import chatModel from '../Models/chatModel.js';
 
 export const createChat = async (req, res) => {
     const { firstId, secondId } = req.body;
-    // check if we already have this users
+
     try {
         const chat = await chatModel.findOne({
             members: { $all: [firstId, secondId] }
@@ -21,7 +21,6 @@ export const createChat = async (req, res) => {
     } catch (error) {
         console.log('Error creating chat', error)
         res.status(500).json(error)
-        // res.status(500).json({ error: error })
     }
 };
 

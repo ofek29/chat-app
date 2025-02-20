@@ -9,7 +9,7 @@ export const GetLastMessage = (chat: UserChat) => {
 
     useEffect(() => {
         const getMessage = async () => {
-            const response = await getFromApi(`${baseUrl}/messages/${chat?._id}?limit=1&sortOrder=-1`);
+            const response = await getFromApi(`${baseUrl}/messages/${chat?._id}?getLastMessage=true`);
             if (response.error) {
                 return console.log('Error getting message', response);
             }
