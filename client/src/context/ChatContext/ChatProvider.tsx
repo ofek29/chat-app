@@ -17,13 +17,11 @@ export const ChatProvider = ({ children, user }: Props) => {
     const [userChatsError, setUserChatsError] = useState(null);
     const [currentChat, setCurrentChat] = useState<UserChat | null>(null);
     const [messages, setMessages] = useState<Message[] | null>(null);
-    // const [hasMoreMessages, setHasMoreMessages] = useState(true);
     const [isMessagesLoading, setIsMessagesLoading] = useState(true);
     const [messagesError, setMessagesError] = useState<ChatsError | null>(null);
     const [allUsers, setAllUsers] = useState<User[]>([]);
     const [socket, setSocket] = useState<Socket | null>(null);
     const [onlineUsers, setOnlineUsers] = useState<OnlineUsers | undefined>(undefined);
-    // const [sendMessageError, setSendMessageError] = useState<ChatsError>(null);
     const [newMessage, setNewMessage] = useState<Message | null>(null);
     const [updateLastMessage, setUpdateLastMessage] = useState<Message | null>(null);
 
@@ -149,37 +147,6 @@ export const ChatProvider = ({ children, user }: Props) => {
         getMessages();
     }, [currentChat, user?._id]);
 
-    // // get all messages for current chat
-    // useEffect(() => {
-    //     getMessages();
-    // }, [currentChat, user]);
-
-    // const getMessages = async () => {
-
-    //     if (user?._id) {
-    //         if (!hasMoreMessages || isMessagesLoading) return;
-    //         setIsMessagesLoading(true);
-    //         setMessagesError(null);
-
-    //         const response = await getFromApi(`${baseUrl}/messages/${currentChat?._id}`);
-    //         if (response.error) {
-    //             console.log('error loading Messages', response.error);
-    //             return setMessagesError(response);
-    //         }
-
-    //         if (response.length === 0) {
-    //             setHasMoreMessages(false);
-    //             return; //??
-    //         } else {
-    //             setMessages((prev) => {
-    //                 if (prev === null) return null;
-    //                 return [...prev, response];
-    //             });
-    //         }
-    //         setIsMessagesLoading(false);
-
-    //     }
-    // }
 
     // all users. potential chats
     useEffect(() => {

@@ -19,13 +19,13 @@ export const UsersChat: React.FC<UsersChatProps> = ({ chat, user }) => {
     const { onlineUsers, updateLastMessage } = useChat();
     const [lastMessage, setLastMessage] = useState<Message | null>(null);
 
-    // Update last message with db last message
+    // load last message from database
     const last = GetLastMessage(chat);
     useEffect(() => {
         setLastMessage(last);
     }, [last]);
 
-    // Update last message with new message from socket
+    // Update last message when getting new message from socket
     useEffect(() => {
         if (updateLastMessage && updateLastMessage.chatId === chat._id) {
             setLastMessage(updateLastMessage);
