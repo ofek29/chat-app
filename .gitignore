@@ -1,26 +1,20 @@
 # OS generated files
 .DS_Store
-Thumbs.db
 
-#Server 
+# Server 
 server/node_modules/
 server/glide-logs/
 server/.env
 
-# React (Frontend)
+# Client
 client/node_modules/
 client/build/
+client/*.tsbuildinfo
 
 build/
 dist/
 node_modules/
-npm-debug.log*
-yarn-debug.log*
 .env
 
-# Miscellaneous
-*.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
+#
+present.txt

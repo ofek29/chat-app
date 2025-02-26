@@ -47,7 +47,7 @@ export const UsersChat: React.FC<UsersChatProps> = ({ chat, user }) => {
         return dayjs(lastMessage?.createdAt).fromNow(true);
     }
     return (
-        <div className="w-[20%] min-w-[200px] border-b-[0.5px] border-gray-500 " >
+        <div className="w-[20%] min-w-[250px] border-b-[0.5px] border-gray-500 " >
             <div className="flex items-center gap-3 p-2 w-full">
                 <img className="h-8 w-8 rounded-full" src={avatar} alt="avatar" />
                 <div className="w-full truncate">

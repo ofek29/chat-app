@@ -56,7 +56,7 @@ export const ChatBox = () => {
     };
 
     return (<>
-        <div className="w-[50%] min-w-[300px] h-full ">
+        <div className="w-[50%] min-w-[250px] h-full ">
             <div className="text-2xl font-semibold shadow-lg text-center rounded-t-md  h-10">
                 {recipientUser?.name}
             </div>
